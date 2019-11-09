@@ -1,0 +1,31 @@
+{
+  "name": "figa",
+  "version": "1.0.0",
+  "description": "File gallant - a hash tag based file system.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nawaazwill11/node.git"
+  },
+  "keywords": [
+    "figa",
+    "filegallant",
+    "hash",
+    "hastags",
+    "filesystem",
+    "node",
+    "nodeproject"
+  ],
+  "author": "Nawaaz Kortiwala",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/nawaazwill11/node/issues"
+  },
+  "homepage": "https://github.com/nawaazwill11/node#readme",
+  "dependencies": {
+    "mongodb": "^3.3.3"
+  }
+}
