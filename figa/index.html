@@ -18,19 +18,19 @@
         <![endif]-->
         <nav id="navbar">
             <div id="site">
-                <a id="site-name" href="!#">Figa</a>
+                <a id="site-name" href="#!">Figa</a>
             </div>
         </nav>
         <div class="container">
             <main id="root">
                 <div id="upload">
                     <div id="upload-root">
-                        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                        <form id="uploadForm" name="uploadForm" method="POST" enctype="multipart/form-data">
                             <div id="upload-title">
                                 <h1>Upload</h1>
                             </div>
                             <div id="tag-container">
-                                <input class="tags" type="text" placeholder="Add tags. Separate by commas.">
+                                <input id="tags" name="tags" class="tags" type="text" placeholder="Add tags. Separate by commas." required>
                             </div>
                             <div id="upload-stage">
                                 <div id="add-box" class="image-box">
@@ -101,31 +101,67 @@
                 return false;
             }
             $('#uploadForm').on('click', '#upload-do', function () {
-                let formData = new FormData();
+                let formData = new FormData(document.forms.uploadForm);
                 let files = upload_inp.files;
                 for (let i = 0; i < files.length; i++) {
                     formData.append('images', files[i]);
                 }
-
-                $.ajax({
-                    async: true,
-                    url: '/upload',
-                    method: 'post',
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function(data) {
-                        console.log(data);
-                        postUpload();
-                    },
-                    error: function(data) {
-                        console.log(data);
+                let tags = $('#tags');
+                let tags_val = tags.val();
+                let error = null;
+                if (tags_val.length === 0) {
+                    error = 'Error: Please add one or more tags.';
+                }
+                // else if (!/^(([a-z0-9][a-z0-9_\-]*[a-z0-9_]+)(\s*\,\s*)*)+\s*$/i.test(tags_val)) {
+                //     alert('Tags should have atleast 2 characters\nBegin only with an alphabet or number\nSeparated by commas');
+                //     tags.focus();
+                // }
+                else {
+                    let split_tags = tags_val.split(',');
+                    for (let i = 0; i < split_tags.length; i++) {
+                        tag = split_tags[i].trim();
+                        if (tag.length < 2) {
+                            error = 'Error: Each tag should have at least 2 characters.'
+                            break;
+                        }
+                        else if (!/^\w|\w$/.test(tag)) {
+                            error = 'Error: Tags should begin or end only with alphabets, numbers or an underscore.' 
+                            break;
+                        }
+                        else if (/\s/.test(tag)) {
+                            error = 'Error: Tags cannot contain spaces.';
+                        }
                     }
-                });
+                }
+                if (!uploaded_files) {
+                    alert('Error: No files selected to upload.');
+                }
+                else if (error) {
+                    tags.css('border-color', 'red');
+                    alert(error);
+                    tags.focus();
+                }
+                else {
+                    $.ajax({
+                        async: true,
+                        url: '/upload',
+                        method: 'post',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function(data) {
+                            console.log(data);
+                            postUpload(data);
+                        },
+                        error: function(data) {
+                            console.log(data);
+                        }
+                    });
+                }
             });
 
-            function postUpload() {
-
+            function postUpload(data) {
+                console.log(data);
             }
 
         </script>

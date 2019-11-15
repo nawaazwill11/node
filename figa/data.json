@@ -1,0 +1,107 @@
+{
+    "files": [
+        {
+            "id": 1,
+            "filename": "close.svg",
+            "originalname": "close.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 2,
+            "filename": "college.svg",
+            "originalname": "college.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 3,
+            "filename": "contact.svg",
+            "originalname": "contact.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 4,
+            "filename": "cross.png",
+            "originalname": "cross.png",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 5,
+            "filename": "cross-white.svg",
+            "originalname": "cross-white.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 6,
+            "filename": "css3.svg",
+            "originalname": "css3.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 7,
+            "filename": "data.svg",
+            "originalname": "data.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 8,
+            "filename": "facebook-white.svg",
+            "originalname": "facebook-white.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 9,
+            "filename": "form.svg",
+            "originalname": "form.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 10,
+            "filename": "github.svg",
+            "originalname": "github.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 11,
+            "filename": "github-white.svg",
+            "originalname": "github-white.svg",
+            "tags": [
+                "mandap"
+            ]
+        },
+        {
+            "id": 12,
+            "filename": "ham.png",
+            "originalname": "ham.png",
+            "tags": [
+                "mandap"
+            ]
+        }
+    ],
+    "tags": [
+        {
+            "tagname": "tagname",
+            "assocfile": []
+        }
+    ],
+    "lastId": 12
+}
