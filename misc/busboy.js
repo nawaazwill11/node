@@ -2,15 +2,58 @@ const fs = require('fs'); // access file system
 const fh = require('finalhandler'); // finalhandler instance
 const Router = require('router'); // router class
 const router = Router(); // router instance
-const server = require('http').createServer(); // http server instance
+const server = require('http'); // http server instance
 const Busboy = require('busboy');
 const PORT = 8080
+let count = 0;
 
-server.on('request', function (request, response){
+server.createServer(function (request, response){
     console.log(request.url);
-    router(request, response, fh(request, response));
-});
-server.listen(PORT);
+    if (request.url == '/') {
+        response.writeHead(200, {'Content-Type': 'text/html'});
+        fs.createReadStream('./index.html').pipe(response);
+    }
+    else if (/css\/\w+\.css/.test(request.url)) {
+        fs.readdir('css', (error, files) => {
+            if (error) return console.error(error);
+            for (let i = 0; i < files.length; i++) {
+                console.log(`/css/${files[i]}`);
+                if (`/css/${files[i]}` === request.url) {
+                    response.writeHead(200, {'Content-type': 'text/css'});
+                    fs.createReadStream(request.url.slice(1,)).pipe(response);
+                    return true;
+                }
+            }
+            response.writeHead(404);
+            response.end();
+        })
+    }
+    else if (/js\/[\w.-]+\.js/.test(request.url)) {
+        if (count < 1) {
+            count += 1;
+            console.log('gave');
+            fs.readdir('js', (error, files) => {
+                if (error) return console.error(error);
+                for (let i = 0; i < files.length; i++) {
+                    console.log(`/js/${files[i]}`);
+                    if (`/js/${files[i]}` === request.url) {
+                        response.writeHead(200, {'Content-type': 'text/css'});
+                        fs.createReadStream(request.url.slice(1,)).pipe(response);
+                        return true;
+                    }
+                }
+                response.writeHead(404);
+                response.end();
+            });
+        }
+        else {
+            response.writeHead(404);
+            response.end('chumni');
+        }
+    }
+
+    // router(request, response, fh(request, response));
+}).listen(PORT);
 
 // root
 router.get('/', (request, response) => {

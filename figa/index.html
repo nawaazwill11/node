@@ -100,12 +100,11 @@
                 }
                 return false;
             }
-            $('#uploadForm').on('click', '#upload-do', function () {
+
+            $('#uploadForm').on('click', '#upload-do', function (e) {
+                event.stopPropagation();
+
                 let formData = new FormData(document.forms.uploadForm);
-                let files = upload_inp.files;
-                for (let i = 0; i < files.length; i++) {
-                    formData.append('images', files[i]);
-                }
                 let tags = $('#tags');
                 let tags_val = tags.val();
                 let error = null;
@@ -150,18 +149,27 @@
                         contentType: false,
                         data: formData,
                         success: function(data) {
-                            console.log(data);
                             postUpload(data);
                         },
                         error: function(data) {
-                            console.log(data);
+                            console.error(data);
                         }
                     });
                 }
             });
 
             function postUpload(data) {
-                console.log(data);
+                if (data !== 'Uploaded.') {
+                    let response = JSON.parse(data);
+                    console.log(response);
+                    if (response['duplicates']) {
+                        let message = response['duplicates'].join(', ');
+                        alert(message);
+                    }
+                }
+                else {
+                    console.log(data);
+                }
             }
 
         </script>

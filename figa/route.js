@@ -1,5 +1,4 @@
 const fs = require('fs');
-const Busboy = require('busboy');
 const Router = require('router');
 const router = Router();
 const fh = require('finalhandler');
@@ -17,7 +16,6 @@ router.get(/css\/\w+\.css/, (request, response) => {
     fs.readdir('css', (error, files) => {
         if (error) return console.error(error);
         for (let i = 0; i < files.length; i++) {
-            console.log(`/css/${files[i]}`);
             if (`/css/${files[i]}` === request.url) {
                 response.writeHead(200, {'Content-type': 'text/css'});
                 fs.createReadStream(request.url.slice(1,)).pipe(response);
@@ -33,9 +31,8 @@ router.get(/js\/[\w.-]+\.js/, (request, response) => {
     fs.readdir('js', (error, files) => {
         if (error) return console.error(error);
         for (let i = 0; i < files.length; i++) {
-            console.log(`/js/${files[i]}`);
             if (`/js/${files[i]}` === request.url) {
-                response.writeHead(200, {'Content-type': 'text/css'});
+                response.writeHead(200, {'Content-type': 'text/js'});
                 fs.createReadStream(request.url.slice(1,)).pipe(response);
                 return true;
             }

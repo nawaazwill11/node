@@ -1,99 +1,67 @@
 {
     "files": [
         {
-            "id": 1,
-            "filename": "close.svg",
-            "originalname": "close.svg",
-            "tags": [
-                "mandap"
-            ]
-        },
-        {
-            "id": 2,
-            "filename": "college.svg",
-            "originalname": "college.svg",
-            "tags": [
-                "mandap"
-            ]
-        },
-        {
-            "id": 3,
-            "filename": "contact.svg",
-            "originalname": "contact.svg",
-            "tags": [
-                "mandap"
-            ]
-        },
-        {
-            "id": 4,
-            "filename": "cross.png",
-            "originalname": "cross.png",
-            "tags": [
-                "mandap"
-            ]
-        },
-        {
             "id": 5,
-            "filename": "cross-white.svg",
-            "originalname": "cross-white.svg",
+            "filename": "arrow.svg",
+            "originalname": "arrow.svg",
             "tags": [
-                "mandap"
+                "asd"
             ]
         },
         {
             "id": 6,
-            "filename": "css3.svg",
-            "originalname": "css3.svg",
+            "filename": "bootstrap.svg",
+            "originalname": "bootstrap.svg",
             "tags": [
-                "mandap"
+                "asdad"
             ]
         },
         {
             "id": 7,
-            "filename": "data.svg",
-            "originalname": "data.svg",
+            "filename": "close.svg",
+            "originalname": "close.svg",
             "tags": [
-                "mandap"
+                "asd"
             ]
         },
         {
             "id": 8,
-            "filename": "facebook-white.svg",
-            "originalname": "facebook-white.svg",
+            "filename": "college.svg",
+            "originalname": "college.svg",
             "tags": [
-                "mandap"
+                "asd"
             ]
         },
         {
             "id": 9,
-            "filename": "form.svg",
-            "originalname": "form.svg",
+            "filename": "career.svg",
+            "originalname": "career.svg",
             "tags": [
-                "mandap"
+                "asda"
             ]
         },
         {
             "id": 10,
-            "filename": "github.svg",
-            "originalname": "github.svg",
+            "filename": "cross.png",
+            "originalname": "cross.png",
             "tags": [
-                "mandap"
+                "asda"
             ]
         },
         {
             "id": 11,
-            "filename": "github-white.svg",
-            "originalname": "github-white.svg",
+            "filename": "contact.svg",
+            "originalname": "contact.svg",
             "tags": [
-                "mandap"
+                "asda"
             ]
         },
         {
             "id": 12,
-            "filename": "ham.png",
-            "originalname": "ham.png",
+            "filename": "call.svg",
+            "originalname": "call.svg",
             "tags": [
-                "mandap"
+                "asda"
             ]
         }
     ],
