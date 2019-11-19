@@ -142,3 +142,18 @@ body {
     background-color: #57b0e6;
     color: white;
 }
+#butter-paper {
+    display: none;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    opacity: 0.8;
+    z-index: 10;
+}
+.show {
+    display: flex !important;
+}

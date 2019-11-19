@@ -2,10 +2,10 @@
     "files": [
         {
             "id": 1,
-            "filename": "close.svg",
-            "originalname": "close.svg",
+            "filename": "css3.svg",
+            "originalname": "css3.svg",
             "tags": [
-                "dgd"
+                "asda"
             ]
         },
         {
@@ -13,7 +13,7 @@
             "filename": "contact.svg",
             "originalname": "contact.svg",
             "tags": [
-                "dgd"
+                "asdasd"
             ]
         }
     ],
@@ -22,6 +22,10 @@
             "tagname": "tagname",
             "assocfile": []
         }
+    ],
+    "files_list": [
+        "css3.svg",
+        "contact.svg"
     ],
     "lastId": 2
 }

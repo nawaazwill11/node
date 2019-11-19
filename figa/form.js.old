@@ -8,21 +8,6 @@ let error = {
     'file_error': null,
     'field_error': null
 }
-let file_types = [
-    'image/jpeg',
-    'image/png',
-    'image/svg+xml',
-    'image/gif'
-];
-let flag = false;
-function validFileType(filetype) {
-    for (let i = 0; i < file_types.length; i++) {
-        if (file_types[i] === filetype) {
-            return true;
-        }
-    }
-    return null;
-}
 
 // checks if the tag field parsed in the form if valid
 function tagError(tags) {
@@ -89,8 +74,14 @@ function newFileObj (filename, tags) {
 
 // updates the database with new file object
 function updateDB(filename, tags, callback) {
+    for (let i = 0; i < db.files.length; i++) {
+        if (db.files[i].filename === filename) {
+            duplicates.push(filename);
+            console.log('duplicate found ', filename);
+            return '';
+        }
+    }
     console.log('adding new file object');
-    db.files_list.push(filename);
     db.files.push(newFileObj(filename, tags));
     db.lastId += 1;
     new Promise((resolve, reject) => {
@@ -106,7 +97,6 @@ function updateDB(filename, tags, callback) {
         callback(err);
     });
     callback(null);
-
 }
 
 // saves files to disk
@@ -127,23 +117,8 @@ function saveFile(file, tags, callback) {
     }
 }
 
-function fileExists(filename) {
-    for (let i = 0; i < db.files.length; i++) {
-        if (db.files[i].filename === filename) {
-            duplicates.push(filename);
-            console.log('duplicate found ', filename);
-            return true;
-        }
-    }
-    return false;
-}
-
 // calls functions to store files to disk
 function uploadFiles(file, tags) {
-    if (fileExists(file.filename)) {
-        file.file.resume();
-        return '';
-    }
     saveFile(file, tags, err => {
         if (err) {
             error['file_error'] = err;
@@ -153,35 +128,21 @@ function uploadFiles(file, tags) {
     });
 }
 
-function addError(message, type) {
-    if (message){
-        error[type] = message;
-        flag = true;
-        return true;
-    }
-    return false;
-}
-
 // generate error response
-function errorReporter() {
+function errorCheck(error, response) {
     console.log(error);
-    let errors_list = [];
     for (let e in error) {
         if (error[e]) {
-            errors_list.push(error[e]);
+            response.writeHead(500, {'Content-type': 'text/plain'});
+            response.end(error[e]);
+
         }
     }
-    return errors_list;
 }
 
 // checks duplicates and notifies
-function finalOp(error, response) {
-    let errors_list = errorReporter();
-    if (errors_list.length > 0) {
-        response.writeHead(500, {'Content-type': 'text/plain'});
-        response.end(errors_list.toString());
-    }
-    else if (duplicates.length > 0) {
+function finalOp(response) {
+    if (duplicates.length > 0) {
         response.writeHead(207, {'Content-Type': 'text/plain'});
         response.end(JSON.stringify({
             "duplicates": duplicates
@@ -196,55 +157,35 @@ function finalOp(error, response) {
 // main function to process form parsing and uploading files
 async function upload(request, response) {
     duplicates = [];                                     // empties the duplicate array on each uplaod request
-    flag = false;
     let busboy = new Busboy({headers: request.headers}); // busboy instance for body parsing
     db = JSON.parse(await getReadFile(db_file));         // database current state
     let tags = [];                                       // stores tags from form
     // parsing fields in the incoming form
     busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encdoing, mimetype) => {
         // validation for incoming field
-        console.log(flag);
-        if (!flag) {
-            if (fieldname == 'tags') { 
-                if (!addError(tagError(val), 'field_error')) {
-                    val.split(',').forEach(tag => {
-                        tags.push(tag.trim());
-                    });
-                }
+        if (fieldname == 'tags') { 
+            error['field_error'] = tagError(val);
+            if (!error['field_error']) {
+                val.split(',').forEach(tag => {
+                    tags.push(tag.trim());
+                });
             }
-            else {
-                addError('Internal error: Invalid tag input. Please retry.', 'field_error');
-            }    
         }
         else {
-            addError('Internal error: Unresolved errors. Please refresh the page and retry.', 'field_error');
-        }    
-        
+            error['field_error'] = tagError('There has been un error. Please retry.');
+        }
     });
     // parsing files 
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        if (!flag) {
-            if (validFileType(mimetype)) {
-                uploadFiles({
-                    filename: filename,
-                    file: file,
-                }, tags);
-            }
-            else {
-                addError('Internal error: Unsupported file type. Please retry.', 'file_error');
-                file.resume();
-            }
-        }
-        else {
-            addError('Internal error: Unresolved errors. Please refresh the page and retry.', 'field_error');
-            file.resume();
-        }
+        uploadFiles({
+            filename: filename,
+            file: file,
+        }, tags);
     });
     // parsing ends
     busboy.on('finish', function() {
-        setTimeout(()=> {
-            finalOp(error, response);
-        }, 5000);
+        errorCheck(error, response);
+        finalOp(response);
         console.log('Done parsing form!');
     });
     request.pipe(busboy);

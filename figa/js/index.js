@@ -21,7 +21,7 @@ upload_inp.addEventListener('change', e => {
     else{
         new Promise((resolve, reject) => {
             for (let i = 0; i < uploaded_files.length; i++){
-                if (valiadFileType(uploaded_files[i])) {
+                if (validFileType(uploaded_files[i])) {
                     let image_box = document.createElement('div');
                     image_box.id = uploaded_files[i].name;
                     image_box.className = 'image-box';
@@ -72,7 +72,7 @@ function dropImage(that) {
     descImageCount();
 }
 
-function valiadFileType(file) {
+function validFileType(file) {
     for (let i = 0; i < file_types.length; i++) {
         if (file_types[i] === file.type) {
             return true;
@@ -83,7 +83,6 @@ function valiadFileType(file) {
 
 $('#uploadForm').on('click', '#upload-do', function (e) {
     event.stopPropagation();
-
     let formData = new FormData(document.forms.uploadForm);
     let tags = $('#tags');
     let tags_val = tags.val();
@@ -91,10 +90,6 @@ $('#uploadForm').on('click', '#upload-do', function (e) {
     if (tags_val.length === 0) {
         error = 'Error: Please add one or more tags.';
     }
-    // else if (!/^(([a-z0-9][a-z0-9_\-]*[a-z0-9_]+)(\s*\,\s*)*)+\s*$/i.test(tags_val)) {
-    //     alert('Tags should have atleast 2 characters\nBegin only with an alphabet or number\nSeparated by commas');
-    //     tags.focus();
-    // }
     else {
         let split_tags = tags_val.split(',');
         for (let i = 0; i < split_tags.length; i++) {
@@ -122,8 +117,10 @@ $('#uploadForm').on('click', '#upload-do', function (e) {
     }
 
     else {
+        let butter_paper = document.getElementById('butter-paper');
+        butter_paper.classList.add('show');
         $.ajax({
-            async: true,
+            async: false,
             url: '/upload',
             method: 'post',
             processData: false,
@@ -131,8 +128,11 @@ $('#uploadForm').on('click', '#upload-do', function (e) {
             data: formData,
             success: function(data) {
                 postUpload(data);
+                butter_paper.classList.remove('show');
             },
             error: function(data) {
+                butter_paper.classList.remove('show');                
+                alert(data.responseText);
                 console.error(data);
             }
         });
@@ -146,13 +146,14 @@ function postUpload(data) {
         console.log('response: ', response);
         if (response['duplicates'].length > 0) {
             let message = response['duplicates'].join(', ');
-            let reupload = confirm(`Upload failed as duplicate images were found: ${message}`);
+            let reupload = confirm(`Duplicates found.\nCannot upload: ${message}\nRetry with different files or file names.`);
             if (reupload) {
 
             }
         }
     }
     else {
+        alert('Upload successfully.')
         console.log('Uploaded successfully.')
     }
 }
