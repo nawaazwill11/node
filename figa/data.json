@@ -1,10 +1,27 @@
 {
-    "files": [],
+    "files": [
+        {
+            "id": 1,
+            "filename": "close.svg",
+            "originalname": "close.svg",
+            "tags": [
+                "dgd"
+            ]
+        },
+        {
+            "id": 2,
+            "filename": "contact.svg",
+            "originalname": "contact.svg",
+            "tags": [
+                "dgd"
+            ]
+        }
+    ],
     "tags": [
         {
             "tagname": "tagname",
             "assocfile": []
         }
     ],
-    "lastId": 0
+    "lastId": 2
 }

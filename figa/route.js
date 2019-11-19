@@ -43,7 +43,6 @@ router.get(/js\/[\w.-]+\.js/, (request, response) => {
 });
 // images
 router.get(/img\/[\w.-]+/, (request, response) => {
-    console.log('here');
     let dir = 'img';
     let url = request.url;
     fs.readdir(dir, (error, files) => {
