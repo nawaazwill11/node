@@ -1,14 +1,15 @@
 const Busboy = require('busboy'); // busboy class
-const fs = require('fs'); // access file system
-const db_file = './data.json';
-let count = 0;
-let duplicates = []; 
-let db = {}; //globally accessible json database
+const fs = require('fs');         // access file system
+const db_file = './data.json';    // database file location
+let duplicates = [];              // stores duplicate file during form parsing
+let db = {};                      // globally accessible json database
+// stores file and field error during form parsing
 let error = {
     'file_error': null,
     'field_error': null
 }
 
+// checks if the tag field parsed in the form if valid
 function tagError(tags) {
     let error = null;
     if (tags.length === 0) {
@@ -34,6 +35,7 @@ function tagError(tags) {
     return error;
 }
 
+// returns the database copy
 function getReadFile(path) {
     return new Promise((resolve, reject) => {
         fs.readFile(path, 'utf8', (error, data) => {
@@ -43,10 +45,12 @@ function getReadFile(path) {
     });   
 }
 
+// return the id of the latest entry from the database
 function getLastId() {
     return db.lastId;
 }
 
+// returns a new file object
 function newFileObj (filename, tags) {
     // if (obj) {
     //     let newTags = []
@@ -68,6 +72,7 @@ function newFileObj (filename, tags) {
     }
 }
 
+// updates the database with new file object
 function updateDB(filename, tags, callback) {
     for (let i = 0; i < db.files.length; i++) {
         if (db.files[i].filename === filename) {
@@ -94,6 +99,7 @@ function updateDB(filename, tags, callback) {
     callback(null);
 }
 
+// saves files to disk
 function saveFile(file, tags, callback) {
     try {
         file['file'].pipe(fs.createWriteStream(`./uploads/${file.filename}`));
@@ -111,6 +117,7 @@ function saveFile(file, tags, callback) {
     }
 }
 
+// calls functions to store files to disk
 function uploadFiles(file, tags) {
     saveFile(file, tags, err => {
         if (err) {
@@ -122,6 +129,7 @@ function uploadFiles(file, tags) {
 
 }
 
+// generate error response
 function errorCheck(error, response) {
     console.log(error);
     for (let e in error) {
@@ -133,6 +141,7 @@ function errorCheck(error, response) {
     }
 }
 
+// checks duplicates and notifies
 function finalOp(response) {
     if (duplicates.length > 0) {
         response.writeHead(207, {'Content-Type': 'text/plain'});
@@ -146,21 +155,16 @@ function finalOp(response) {
     }
 }
 
-
+// main function to process form parsing and uploading files
 async function upload(request, response) {
-    duplicates = [];
-    let busboy = new Busboy({headers: request.headers});    
-    db = JSON.parse(await getReadFile(db_file));
-    let file;
-    let tags = [];
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        uploadFiles({
-            filename: filename,
-            file: file,
-        }, tags);
-    });
+    duplicates = [];                                     // empties the duplicate array on each uplaod request
+    let busboy = new Busboy({headers: request.headers}); // busboy instance for body parsing
+    db = JSON.parse(await getReadFile(db_file));         // database current state
+    let tags = [];                                       // stores tags from form
+    // parsing fields in the incoming form
     busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encdoing, mimetype) => {
-        if (fieldname == 'tags') {
+        // validation for incoming field
+        if (fieldname == 'tags') { 
             error['field_error'] = tagError(val);
             if (!error['field_error']) {
                 val.split(',').forEach(tag => {
@@ -168,10 +172,19 @@ async function upload(request, response) {
                 });
             }
         }
+        else {
+            error['field_error'] = tagError('There has been un error. Please retry.');
+        }
     });
+    // parsing files 
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        uploadFiles({
+            filename: filename,
+            file: file,
+        }, tags);
+    });
+    // parsing ends
     busboy.on('finish', function() {
-        count++;
-        console.log(count);
         errorCheck(error, response);
         finalOp(response);
         console.log('Done parsing form!');
@@ -179,4 +192,4 @@ async function upload(request, response) {
     request.pipe(busboy);
 }
 
-module.exports = { upload }
+module.exports = { upload } // upload function accessible using form.upload

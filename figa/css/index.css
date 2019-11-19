@@ -34,7 +34,7 @@ body {
 }
 #upload-root {
     position: relative;
-    width: 500px;
+    width: 800px;
     background-color: var(--upload-bg);
     
     /* justify-content: center; */
@@ -50,6 +50,7 @@ body {
 }
 #tag-container {
     margin-top: 20px;
+    z-index: 1;
 }
 #tags {
     border: none;
@@ -67,6 +68,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    padding: 10px 0;
     max-height: 300px;
     overflow-y: scroll;
 }
@@ -98,6 +100,13 @@ body {
 #add-image:hover {
     background-color: #00000047;
 }
+.delete {
+    width: 30px;
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    z-index: 2;
+}
 #add-image:focus {
     outline:0 !important;
 }
@@ -108,8 +117,8 @@ body {
     padding-bottom: 0;
 }
 #total_upload {
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
 }
 #upload-controls-container {
     border-top: 1px solid lightgray;

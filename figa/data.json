@@ -1,75 +1,10 @@
 {
-    "files": [
-        {
-            "id": 5,
-            "filename": "arrow.svg",
-            "originalname": "arrow.svg",
-            "tags": [
-                "asd"
-            ]
-        },
-        {
-            "id": 6,
-            "filename": "bootstrap.svg",
-            "originalname": "bootstrap.svg",
-            "tags": [
-                "asdad"
-            ]
-        },
-        {
-            "id": 7,
-            "filename": "close.svg",
-            "originalname": "close.svg",
-            "tags": [
-                "asd"
-            ]
-        },
-        {
-            "id": 8,
-            "filename": "college.svg",
-            "originalname": "college.svg",
-            "tags": [
-                "asd"
-            ]
-        },
-        {
-            "id": 9,
-            "filename": "career.svg",
-            "originalname": "career.svg",
-            "tags": [
-                "asda"
-            ]
-        },
-        {
-            "id": 10,
-            "filename": "cross.png",
-            "originalname": "cross.png",
-            "tags": [
-                "asda"
-            ]
-        },
-        {
-            "id": 11,
-            "filename": "contact.svg",
-            "originalname": "contact.svg",
-            "tags": [
-                "asda"
-            ]
-        },
-        {
-            "id": 12,
-            "filename": "call.svg",
-            "originalname": "call.svg",
-            "tags": [
-                "asda"
-            ]
-        }
-    ],
+    "files": [],
     "tags": [
         {
             "tagname": "tagname",
             "assocfile": []
         }
     ],
-    "lastId": 12
+    "lastId": 0
 }
