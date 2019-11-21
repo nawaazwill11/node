@@ -21,38 +21,77 @@
                 <a id="site-name" href="#!">Figa</a>
             </div>
         </nav>
-        <div class="container">
-            <main id="root">
-                <div id="upload">
-                    <div id="upload-root">
-                        <form id="uploadForm" name="uploadForm" method="POST" enctype="multipart/form-data">
-                            <div id="upload-title">
-                                <h1>Upload</h1>
-                            </div>
-                            <div id="tag-container">
-                                <input id="tags" name="tags" class="tags" type="text" placeholder="Add tags. Separate by commas." required>
-                            </div>
-                            <div id="upload-stage">
-                                <div id="add-box" class="image-box">
-                                    <input id="upload-inp" type="file" name="images" accept="image/*" multiple>
-                                    <button id="add-image" for="uploadInp" type="button">+</button>
-                                </div>
-                            </div>
-                            <div id="upload-info">
-                                <p id="total_upload"></p>   
-                            </div>
-                            <div id="upload-controls-container">
-                                <button id="upload-cancel" class="upload-control" type="button">Cancel</button>
-                                <button id="upload-do" class="upload-control" type="button">Upload</button>
-                            </div>
-                        </form>
+        <div id="container">
+            <div id="heading">
+                <h1>Search</h1>
+            </div>
+            <div id="section-1">
+                <div id="fields-container">
+                    <form id="search-tag-form"name="tags_inp">
+                        <input type="text" id="search_inp">
+                        <img id="search_control" src="./img/search.svg" alt="">
+                    </form>
+                </div>
+            </div>
+            <div id="section-2">
+                <div id="search-info-filter">
+                    <div id="search-info">
+                        <p>Search match: <span id="search-match">2</span></p>
+                    </div>
+                    <div id="search-filter">
+                        <select name="sort" id="sort">
+                            <option value="favorites">Favorites</option>
+                            <option value="latest">Latest</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
                     </div>
                 </div>
-            </main>
+            </div>
+            <div id="section-3">
+                <div id="option-box">
+                    <div id="selector">
+                        <input type="checkbox" name="" id="select-all">
+                        <label for="select-all">All</label>
+                    </div>
+                    <div id="options">
+                        <img src="./img/download.svg" alt="" title="Download">
+                        <img src="./img/share.svg" alt="" title="Share">
+                        <img src="./img/trash.svg" alt="" title="Remove">
+                    </div>
+                </div>
+                <div id="file-container">
+                    <div class="image-box" id="one">
+                        <img src="./data/close.svg" alt="">
+                        <div class="over">
+                            <div class="eye">
+                                <img class="over-img" src="./img/eye.svg" alt="" title="View">
+                            </div>
+                            <div class="star">
+                                <img class="over-img" src="./img/star.svg" alt="" title="Favorite">
+                            </div>
+                            <div class="trash">
+                                <img class="over-img" src="./img/trash.svg" alt="" title="Delete">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-box" id="two">
+                        <img src="./data/close.svg" alt="">
+                        <div class="over">
+                            <div class="eye">
+                                <img class="over-img" src="./img/eye.svg" alt="" title="View">
+                            </div>
+                            <div class="star">
+                                <img class="over-img" src="./img/star.svg" alt="" title="Favorite">
+                            </div>
+                            <div class="trash">
+                                <img class="over-img" src="./img/trash.svg" alt="" title="Delete">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="butter-paper">
-            <h1>Uploading...</h1>
-        </div>
+    
         <script src="./js/jquery-3.4.1.min.js"></script>
         <script src="./js/index.js"></script>
     </body>
