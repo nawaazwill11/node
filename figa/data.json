@@ -1,31 +1,4 @@
 {
-    "files": [
-        {
-            "id": 1,
-            "filename": "css3.svg",
-            "originalname": "css3.svg",
-            "tags": [
-                "asda"
-            ]
-        },
-        {
-            "id": 2,
-            "filename": "contact.svg",
-            "originalname": "contact.svg",
-            "tags": [
-                "asdasd"
-            ]
-        }
-    ],
-    "tags": [
-        {
-            "tagname": "tagname",
-            "assocfile": []
-        }
-    ],
-    "files_list": [
-        "css3.svg",
-        "contact.svg"
-    ],
-    "lastId": 2
+    "files": [],
+    "tags": []
 }

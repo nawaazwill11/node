@@ -3,8 +3,11 @@ const Router = require('router');
 const router = Router();
 const fh = require('finalhandler');
 const form = require('./form');
+const view = require('./view');
 const template = {
     '/': 'index.html',
+    'view': 'view_files.html',
+    'upload': 'upload.html'
 }
 // root
 router.get('/', (request, response) => {
@@ -42,7 +45,7 @@ router.get(/js\/[\w.-]+\.js/, (request, response) => {
     });
 });
 // images
-router.get(/img\/[\w.-]+/, (request, response) => {
+router.get(/img\/[\w\.\-]+/, (request, response) => {
     let dir = 'img';
     let url = request.url;
     fs.readdir(dir, (error, files) => {
@@ -67,9 +70,49 @@ router.get(/img\/[\w.-]+/, (request, response) => {
         response.end();
     });
 });
+// upload page 
+router.get('/upload', (request, response) => {
+    response.writeHead(200, {'Content-Type': 'text/html'});
+    fs.createReadStream(template['upload']).pipe(response);
+});
 // upload form
 router.post('/upload', (request, response) => {
     form.upload(request, response);
+});
+// request uploaded images
+router.get(/\/data\/([a-z\.\-\_0-9]+\.[a-z0-9])/, (request, response) => {
+    let dir = 'uploads';
+    let url = `/${dir}` + request.url.slice(request.url.lastIndexOf('/'), );
+    fs.readdir(dir, (error, files) => {
+        if (error) return console.error(error);
+        let ext = url.slice(url.lastIndexOf('.') + 1, );
+        for (let i = 0; i < files.length; i++) {
+            if (`/${dir}/${files[i]}` === url) {
+                if (ext === 'svg'){
+                    response.writeHead(200, {'Content-type': 'image/svg+xml'});
+                }
+                else if (ext in ['jpg, jpeg']) {
+                    response.writeHead(200, {'Content-type': 'image/jpeg'});
+                }
+                else if (ext === 'png') {
+                    response.writeHead(200, {'Content-type': 'image/png'});
+                }
+                fs.createReadStream(url.slice(1,)).pipe(response);
+                return true;
+            }
+        }
+        response.writeHead(404);
+        response.end();
+    });
+});
+// view uploaded files
+router.get('/view',  (request, response) => {
+    console.log('here');
+    response.writeHead(200, {'Content-Type': 'text/html'});
+    fs.createReadStream(template['view']).pipe(response);
+});
+router.post('/view', function (request, response) {
+    view(response);
 });
 
 module.exports = function (request, response) {

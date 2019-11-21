@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Figa:Upload</title>
+        <meta name="description" content="File Gallant">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./css/upload.css">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <nav id="navbar">
+            <div id="site">
+                <a id="site-name" href="#!">Figa</a>
+            </div>
+        </nav>
+        <div class="container">
+            <main id="root">
+                <div id="upload">
+                    <div id="upload-root">
+                        <form id="uploadForm" name="uploadForm" method="POST" enctype="multipart/form-data">
+                            <div id="upload-title">
+                                <h1>Upload</h1>
+                            </div>
+                            <div id="tag-container">
+                                <input id="tags" name="tags" class="tags" type="text" placeholder="Add tags. Separate by commas." required>
+                            </div>
+                            <div id="upload-stage">
+                                <div id="add-box" class="image-box">
+                                    <input id="upload-inp" type="file" name="images" accept="image/*" multiple>
+                                    <button id="add-image" for="uploadInp" type="button">+</button>
+                                </div>
+                            </div>
+                            <div id="upload-info">
+                                <p id="total_upload"></p>   
+                            </div>
+                            <div id="upload-controls-container">
+                                <button id="upload-cancel" class="upload-control" type="button">Cancel</button>
+                                <button id="upload-do" class="upload-control" type="button">Upload</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="butter-paper">
+            <h1>Uploading...</h1>
+        </div>
+        <script src="./js/jquery-3.4.1.min.js"></script>
+        <script src="./js/upload.js"></script>
+    </body>
+</html>
