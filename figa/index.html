@@ -28,7 +28,7 @@
             <div id="section-1">
                 <div id="fields-container">
                     <form id="search-tag-form"name="tags_inp">
-                        <input type="text" id="search_inp">
+                        <input type="text" id="search_inp" placeholder="Search tags (comma separated)">
                         <img id="search_control" src="./img/search.svg" alt="">
                     </form>
                 </div>
@@ -50,13 +50,13 @@
             <div id="section-3">
                 <div id="option-box">
                     <div id="selector">
-                        <input type="checkbox" name="" id="select-all">
-                        <label for="select-all">All</label>
+                        <input type="checkbox" name="" id="select-multiple">
+                        <label for="select-multiple">Multiple</label>
                     </div>
-                    <div id="options">
-                        <img src="./img/download.svg" alt="" title="Download">
-                        <img src="./img/share.svg" alt="" title="Share">
-                        <img src="./img/trash.svg" alt="" title="Remove">
+                    <div id="options" class="option-hide">
+                        <img src="./img/download.svg" title="Download" id="download">
+                        <img src="./img/share.svg" title="Share" id="share">
+                        <img src="./img/trash.svg" title="Remove" id="delete">
                     </div>
                 </div>
                 <div id="file-container">
