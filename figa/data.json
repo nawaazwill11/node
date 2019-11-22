@@ -1,4 +1,80 @@
 {
-    "files": [],
-    "tags": []
+    "files": [
+        {
+            "id": 1,
+            "filename": "bootstrap.svg",
+            "originalname": "bootstrap.svg",
+            "tags": [
+                "testing"
+            ]
+        },
+        {
+            "id": 2,
+            "filename": "call.svg",
+            "originalname": "call.svg",
+            "tags": [
+                "testing"
+            ]
+        },
+        {
+            "id": 3,
+            "filename": "career.svg",
+            "originalname": "career.svg",
+            "tags": [
+                "testing"
+            ]
+        },
+        {
+            "id": 4,
+            "filename": "cross-white.svg",
+            "originalname": "cross-white.svg",
+            "tags": [
+                "asd"
+            ]
+        },
+        {
+            "id": 5,
+            "filename": "facebook-white.svg",
+            "originalname": "facebook-white.svg",
+            "tags": [
+                "asd"
+            ]
+        }
+    ],
+    "tags": [
+        {
+            "id": 1,
+            "tagname": "testing",
+            "assocfiles": [
+                "bootstrap.svg",
+                "call.svg",
+                "career.svg"
+            ]
+        },
+        {
+            "id": 2,
+            "tagname": "asd",
+            "assocfiles": [
+                "cross-white.svg",
+                "facebook-white.svg"
+            ]
+        },
+        {
+            "id": 3,
+            "tagname": "aspirin",
+            "assocfiles": [
+                "cross-white.svg",
+                "facebook-white.svg"
+            ]
+        },
+        {
+            "id": 4,
+            "tagname": "testicle",
+            "assocfiles": [
+                "cross-white.svg",
+                "facebook-white.svg"
+            ]
+        }
+    ],
+    "lastId": 2
 }

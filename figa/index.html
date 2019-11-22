@@ -27,10 +27,11 @@
             </div>
             <div id="section-1">
                 <div id="fields-container">
-                    <form id="search-tag-form"name="tags_inp">
-                        <input type="text" id="search_inp" placeholder="Search tags (comma separated)">
-                        <img id="search_control" src="./img/search.svg" alt="">
+                    <form id="search-tag-form" name="search-tag-form" enctype="text/plain">
+                        <input type="text" id="search_tags" name="search_tags" placeholder="Search tags (comma separated)" tabindex="1">
+                        <img id="search_control" src="./img/search.svg" alt="" tabindex="2">
                     </form>
+                    <div id="match-container"></div>
                 </div>
             </div>
             <div id="section-2">
@@ -61,7 +62,7 @@
                 </div>
                 <div id="file-container">
                     <div class="image-box" id="one">
-                        <img src="./data/close.svg" alt="">
+                        <img src="./data/call.svg" alt="">
                         <div class="over">
                             <div class="eye">
                                 <img class="over-img" src="./img/eye.svg" alt="" title="View">
@@ -75,7 +76,7 @@
                         </div>
                     </div>
                     <div class="image-box" id="two">
-                        <img src="./data/close.svg" alt="">
+                        <img src="./data/career.svg" alt="">
                         <div class="over">
                             <div class="eye">
                                 <img class="over-img" src="./img/eye.svg" alt="" title="View">

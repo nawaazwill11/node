@@ -88,7 +88,7 @@ $('#uploadForm').on('click', '#upload-do', function (e) {
     let error = null;
     if (tags_val.length === 0) {
         error = 'Error: Please add one or more tags.';
-    }
+    } 
     else {
         let split_tags = tags_val.split(',');
         for (let i = 0; i < split_tags.length; i++) {

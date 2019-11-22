@@ -44,6 +44,37 @@ $('#download').click(function () {
     }
     downloadImages(imagebox_list);
 });
+// disables enter key's default behavior.
+$('body').on('keydown keyup keypress', '#search-tag-form', function (e) {   
+    if (e.keyCode === 13) {
+        e.preventDefault();
+        return false;
+    }
+});
+// create autocomplete dropdown for search tags
+$('#search_tags').keyup(function () {
+    let formData = new FormData(document.forms[0]);
+    $.ajax({
+        async: true,
+        method: 'post',
+        url: '/tags',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function(data) {
+            dropDownOptions(data);
+        },
+        error: function(data) {
+            console.error(data);
+        }
+    });
+});
+$('#search_tags').focus(function () {
+    matchContainerToggle();
+});
+$('#search_tags').focusout(function () {
+    $('#match-container').css('display', 'none');
+});
 // creates th preview-window
 function makePreviewWindow() {
     let preview = document.createElement('div');
@@ -51,6 +82,20 @@ function makePreviewWindow() {
     let img = document.createElement('img');
     preview.appendChild(img);
     img.src = $(this).parent().parent().children()[0].src;
+    let former = document.createElement('span');
+    let latter = document.createElement('span');
+    img = document.createElement('img');
+    img.src = './img/former.svg';
+    former.id = 'former';
+    former.className = 'navigate';
+    former.appendChild(img);
+    img = document.createElement('img');
+    img.src = './img/latter.svg';
+    latter.id = 'latter';
+    latter.className = 'navigate';
+    latter.appendChild(img);
+    preview.appendChild(former);
+    preview.appendChild(latter);
     let close = document.createElement('span');
     close.id = 'close-preview';
     close.textContent = 'x';
@@ -92,7 +137,7 @@ function selectModeOn() {
         else {
             $(this).addClass('selected');            
         }
-        showOptions();
+        toggleOptions();
     });   
 }
 // remove select mode features
@@ -105,8 +150,10 @@ function selectModeOff() {
     for (let i = 0; i < imagebox.length; i++) {
         imagebox[i].classList = imagebox[i].classList[0];
     }
+    toggleOptions();
 }
-function showOptions() {
+// shows and hides option
+function toggleOptions() {
     let imagebox = document.getElementsByClassName('image-box');
     let count = 0;
     for (let i = 0; i < imagebox.length; i++) {
@@ -121,5 +168,62 @@ function showOptions() {
     }
     else {
         $('#options').addClass('option-hide');
+    }
+}
+
+// download images 
+function downloadImages(elements) {
+    if (elements.length == 0) {
+        alert('Please select image(s) to download.');
+    }
+    for (let i = 0; i < elements.length; i++) {
+        let fake_link = document.createElement('a');
+        let src = elements[i].children[0].src;
+        let filename = src.slice(src.lastIndexOf('/') + 1, );
+        fake_link.href = src;
+        fake_link.setAttribute('hidden', '');
+        fake_link.setAttribute('download', filename);
+        elements[i].appendChild(fake_link);
+        fake_link.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+        fake_link.click();
+        fake_link.remove();
+    }
+}
+// generates dropdown UI elements
+function dropDownOptions(data) {
+    let match_container = document.getElementById('match-container');
+    match_container.innerHTML = '';
+    if (data.length > 0) {
+        data = data.split(',');
+        let list = document.createElement('ul');
+        list.id = 'search-option-list';
+        data.forEach(item => {
+            let option = document.createElement('li');
+            option.textContent = item;
+            option.className = 'search-option';
+            option.addEventListener('mousedown', function () {
+                $('#search_tags').val(this.innerText);
+                match_container.style.display = 'none';
+            });
+            option.addEventListener('keydown', function (e) {
+                if (e.keyCode === 13) {
+                    $('#search_tags').val(this.innerText);
+                }
+            });
+            list.appendChild(option);
+        });
+        match_container.appendChild(list);
+    }
+    matchContainerToggle();
+}
+// shows and hides autocomplete list items.
+function matchContainerToggle() {
+    if ($('#match-container').children().length > 0) {
+        $('#match-container').css('display', 'block');
+    }
+    else {
+        $('#match-container').css('display', 'none');
     }
 }

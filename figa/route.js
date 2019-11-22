@@ -4,6 +4,7 @@ const router = Router();
 const fh = require('finalhandler');
 const form = require('./form');
 const view = require('./view');
+const search = require('./search');
 const template = {
     '/': 'index.html',
     'view': 'view_files.html',
@@ -113,6 +114,9 @@ router.get('/view',  (request, response) => {
 });
 router.post('/view', function (request, response) {
     view(response);
+});
+router.post('/tags', function (request, response) {
+    search(request, response);
 });
 
 module.exports = function (request, response) {
