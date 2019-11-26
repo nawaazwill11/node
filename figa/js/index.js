@@ -52,30 +52,44 @@ $('body').on('keydown keyup keypress', '#search-tag-form', function (e) {
     }
 });
 // create autocomplete dropdown for search tags
-$('#search_tags').keyup(function () {
-    let formData = new FormData(document.forms[0]);
-    $.ajax({
-        async: true,
-        method: 'post',
-        url: '/tags',
-        processData: false,
-        contentType: false,
-        data: formData,
-        success: function(data) {
-            dropDownOptions(data);
-        },
-        error: function(data) {
-            console.error(data);
-        }
-    });
+$('#search_tags').keyup(function (e) {
+    if (e.keyCode === 38 || e.keyCode === 40) {
+        listOptionSelect(e.keyCode);
+        return false;
+    }
+    else if (e.keyCode === 13) {
+        selectActiveOption();
+    }
+    let val = $(this).val();
+    if ((/^\w+[\-\w]*$/).test(val.split(',')[val.split(',').length - 1].trim())) {
+        let formData = new FormData(document.forms[0]);
+        console.log(val);
+        $.ajax({
+            async: true,
+            method: 'post',
+            url: '/tags',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function(data) {
+                dropDownOptions(reduceOptions(data.split(',')));
+            },
+            error: function(data) {
+                console.error(data);
+            }
+        });
+    }
+    else {
+        $('#match-container').html('');
+    }
 });
 $('#search_tags').focus(function () {
     matchContainerToggle();
 });
-$('#search_tags').focusout(function () {
-    $('#match-container').css('display', 'none');
-});
-// creates th preview-window
+// $('#search_tags').focusout(function () {
+//     $('#match-container').css('display', 'none');
+// });
+// creates the preview-window
 function makePreviewWindow() {
     let preview = document.createElement('div');
     preview.id = 'preview-window';
@@ -203,9 +217,8 @@ function dropDownOptions(data) {
             let option = document.createElement('li');
             option.textContent = item;
             option.className = 'search-option';
-            option.addEventListener('mousedown', function () {
-                $('#search_tags').val(this.innerText);
-                match_container.style.display = 'none';
+            option.addEventListener('mousedown', function (e) {
+                $('#search_tags').val(autoFill() + this.innerText);
             });
             option.addEventListener('keydown', function (e) {
                 if (e.keyCode === 13) {
@@ -226,4 +239,71 @@ function matchContainerToggle() {
     else {
         $('#match-container').css('display', 'none');
     }
+}
+
+function autoFill() {
+    let match_container = $('#match-container');
+    let current_val = getCurrentOptions(); // gets current tags in the input
+    let comma = current_val.length > 1 ? ', ' : ''; // adds coma
+    return current_val.slice(0, current_val.length - 1).join(', ') + comma; // inserts values to search tags input
+}
+
+function getCurrentOptions() {
+    let current_val = $('#search_tags').val().split(',');
+    return Array.from(current_val.map(function (item) {
+        return item.trim();
+    }));
+}
+
+function listOptionSelect(key) {
+    let search_list = $('#search-option-list')
+    let child = search_list.find('li.active');
+    if (child.length > 0) {
+        child = $(child[0]);
+        if (key === 40) {
+            child.next().addClass('active');
+        }
+        else {
+            // children = Array.from(search_list.children());
+            // let pos = children.indexOf(child[0]);
+            child.prev().addClass('active');
+        }
+        child.removeClass('active');
+    }
+    else {
+        if (key === 38) {
+            $($('.search-option')[$('.search-option').length - 1]).addClass('active');
+        }
+        else {
+            $($('.search-option')[0]).addClass('active');
+        }
+    }
+}
+function selectActiveOption() {
+    console.log('here');
+    let child = $('#search-option-list').find('li.active')[0];
+    $('#search_tags').val(autoFill() + child.innerText + ', ');
+}
+
+function reduceOptions(data) {
+    let filtered_list = [];
+    let flag = false;
+    let current_options = getCurrentOptions();
+    console.log('data ', data);
+    console.log('current ', current_options);
+    for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < current_options.length; j++) {
+            if (current_options[j] === data[i]) {
+                console.log('inside' ,current_options[i])
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) {
+            filtered_list.push(data[i]);
+        }
+        flag = false;
+    }
+    console.log(filtered_list);
+    return filtered_list.join(',');
 }
