@@ -2,9 +2,9 @@ const fs = require('fs');
 const Router = require('router');
 const router = Router();
 const fh = require('finalhandler');
-const form = require('./form');
+const upload = require('./upload');
 const view = require('./view');
-const search = require('./search');
+const fetch = require('./fetch');
 const template = {
     '/': 'index.html',
     'view': 'view_files.html',
@@ -76,9 +76,9 @@ router.get('/upload', (request, response) => {
     response.writeHead(200, {'Content-Type': 'text/html'});
     fs.createReadStream(template['upload']).pipe(response);
 });
-// upload form
+// upload upload
 router.post('/upload', (request, response) => {
-    form.upload(request, response);
+    upload.upload(request, response);
 });
 // request uploaded images
 router.get(/\/data\/([a-z\.\-\_0-9]+\.[a-z0-9])/, (request, response) => {
@@ -115,10 +115,12 @@ router.get('/view',  (request, response) => {
 router.post('/view', function (request, response) {
     view(response);
 });
-router.post('/tags', function (request, response) {
-    search(request, response);
+router.post('/suggestion', function (request, response) {
+    fetch.suggestions(response);
 });
-
+router.post('/search', function (request, response) {
+    fetch.tagSearch(request, response);
+});
 module.exports = function (request, response) {
     console.log(request.url);
     router(request, response, fh(request, response));

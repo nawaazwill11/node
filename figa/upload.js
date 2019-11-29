@@ -1,9 +1,10 @@
 const Busboy = require('busboy'); // busboy class
-const fs = require('fs');         // access file system
-const db_file = './data.json';    // database file location
-let files_list = [];              // stores uploaded files names
+const fs = require('fs');    
+     // access file system
+const DB = require('./db');
+let files_list = [];               // stores uploaded files names
 let duplicates = [];              // stores duplicate file during form parsing
-let db = {};                      // globally accessible json database
+let db;                          // globally accessible json database
 // stores file and field error during form parsing
 let error = {
     'file_error': null,
@@ -50,16 +51,6 @@ function tagError(tags) {
         }
     }
     return error;
-}
-
-// returns the database copy
-function getReadFile(path) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(path, 'utf8', (error, data) => {
-            if (error) reject(error)
-            resolve(data)
-        });
-    });   
 }
 
 // return the id of the latest entry from the database
@@ -112,25 +103,20 @@ function updateDB(filename, tags, callback) {
     db.files.push(newFileObj(filename, tags));
     updateTags(tags, filename);
     db.lastId += 1;
-    new Promise((resolve, reject) => {
-        fs.writeFile(db_file, JSON.stringify(db, null, 4), error => {
-            if (error) reject(error);
-            resolve(db);
+    DB.updateDB(db)
+        .then(db => {
+            console.log('Promise complete.');
+        })
+        .catch(err => {
+            callback(err);
         });
-    })
-    .then(db => {
-        console.log('Promise complete.');
-    })
-    .catch(err => {
-        callback(err);
-    });
     callback(null);
 }
 
 // saves files to disk
 function saveFile(file, tags, callback) {
     try {
-        file['file'].pipe(fs.createWriteStream(`./uploads/${file.filename}`));
+        file['file'].pipe(fs.createWriteStream(`./img/${file.filename}`));
         updateDB(file.filename, tags, err => {
             if (err) {
                 error.field_error = err;
@@ -250,7 +236,8 @@ async function upload(request, response) {
     duplicates = [];                                     // empties the duplicate array on each uplaod request
     flag = false;
     let busboy = new Busboy({headers: request.headers}); // busboy instance for body parsing
-    db = JSON.parse(await getReadFile(db_file));         // database current state
+    db = await DB.getDB();                                     // database current state
+    console.log(db);
     let tags = [];                                       // stores tags from form
     // parsing fields in the incoming form
     busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encdoing, mimetype) => {

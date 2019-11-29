@@ -31,13 +31,16 @@
                         <input type="text" id="search_tags" name="search_tags" placeholder="Search tags (comma separated)" tabindex="1">
                         <img id="search_control" src="./img/search.svg" alt="" tabindex="2">
                     </form>
+                    <div id="hasError">
+                        <p id="error"></p>
+                    </div>
                     <div id="match-container"></div>
                 </div>
             </div>
             <div id="section-2">
                 <div id="search-info-filter">
                     <div id="search-info">
-                        <p>Search match: <span id="search-match">2</span></p>
+                        <p>Search match: <span id="search-match"></span></p>
                     </div>
                     <div id="search-filter">
                         <select name="sort" id="sort">
@@ -61,38 +64,12 @@
                     </div>
                 </div>
                 <div id="file-container">
-                    <div class="image-box" id="one">
-                        <img src="./data/call.svg" alt="">
-                        <div class="over">
-                            <div class="eye">
-                                <img class="over-img" src="./img/eye.svg" alt="" title="View">
-                            </div>
-                            <div class="star">
-                                <img class="over-img" src="./img/star.svg" alt="" title="Favorite">
-                            </div>
-                            <div class="trash">
-                                <img class="over-img" src="./img/trash.svg" alt="" title="Delete">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="image-box" id="two">
-                        <img src="./data/career.svg" alt="">
-                        <div class="over">
-                            <div class="eye">
-                                <img class="over-img" src="./img/eye.svg" alt="" title="View">
-                            </div>
-                            <div class="star">
-                                <img class="over-img" src="./img/star.svg" alt="" title="Favorite">
-                            </div>
-                            <div class="trash">
-                                <img class="over-img" src="./img/trash.svg" alt="" title="Delete">
-                            </div>
-                        </div>
+                    <div id="empty-container">
+                        <p id="no-text">No files found</p>
                     </div>
                 </div>
             </div>
         </div>
-    
         <script src="./js/jquery-3.4.1.min.js"></script>
         <script src="./js/index.js"></script>
     </body>

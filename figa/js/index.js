@@ -1,3 +1,7 @@
+let tags_list;
+window.onload = fetchSuggestions;
+
+// multiple input based actions
 $('#select-multiple').change(function () {
     if (this.checked) {
         selectModeOn(); // enters select mode
@@ -51,51 +55,133 @@ $('body').on('keydown keyup keypress', '#search-tag-form', function (e) {
         return false;
     }
 });
-// create autocomplete dropdown for search tags
-$('#search_tags').keyup(function (e) {
-    if (e.keyCode === 38 || e.keyCode === 40) {
-        listOptionSelect(e.keyCode);
-        return false;
-    }
-    else if (e.keyCode === 13) {
-        selectActiveOption();
-    }
-    let val = $(this).val();
-    if ((/^\w+[\-\w]*$/).test(val.split(',')[val.split(',').length - 1].trim())) {
-        let formData = new FormData(document.forms[0]);
-        console.log(val);
-        $.ajax({
-            async: true,
-            method: 'post',
-            url: '/tags',
-            processData: false,
-            contentType: false,
-            data: formData,
-            success: function(data) {
-                dropDownOptions(reduceOptions(data.split(',')));
-            },
-            error: function(data) {
-                console.error(data);
-            }
-        });
-    }
-    else {
-        $('#match-container').html('');
-    }
-});
+// shows suggestions if the search input is in focus
 $('#search_tags').focus(function () {
     matchContainerToggle();
 });
-// $('#search_tags').focusout(function () {
-//     $('#match-container').css('display', 'none');
-// });
+// hides suggestions if the search input is out of focus
+$('#search_tags').focusout(function () {
+    $('#match-container').css('display', 'none');
+});
+// button press effect
+$('#search_control').mousedown(function () {
+    $(this).css({'border-style': 'inset', 'width': '25px'});
+});
+// ""
+$('#search_control').mouseup(function () {
+    $(this).css({'border-style': 'none', 'width': '31px'});
+});
+// previous image
+$('body').on('click', '#former', function () {
+    navigateImage.bind($(this))(0);
+    
+});
+$('body').on('click', '#latter', function () {
+    navigateImage.bind($(this))(1);
+});
+// create autocomplete dropdown for search tags
+$('#search_tags').keyup(function (e) {
+    if (e.keyCode === 38 || e.keyCode === 40) { // navigates up and down through the suggested tag options
+        console.log('here');
+        listOptionSelect(e.keyCode);
+    }
+    else if (e.keyCode === 13) { // appends selected / focused suggested item to search input
+        selectActiveOption();
+    }
+    else {
+        dropDownOptions(reduceOptions(getMatchingTags()));
+    }
+    
+});
+$('#search_control').click(function () {
+    let error = searchHasError(1);
+    if (!error) {
+        let formData = new FormData(document.forms[0]);
+        $.ajax({
+            async: true,
+            url: '/search',
+            method: 'post',
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                populateFileContainer(data);
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        });
+    }
+});
+function fetchSuggestions() {
+    console.log('fired');
+    $.ajax({
+        async: true,
+        url: '/suggestion',
+        method: 'post',
+        contentType: false,
+        processData: false,
+        data: JSON.stringify({}),
+        success: function (data) {
+            makeTagsList(data);
+        },
+        error: function(error) {
+            console.error();
+        }
+    });
+}
+// makes a list of all available tags 
+function makeTagsList (data) {
+    tags_list = data.split(',');
+    console.log('tags_list: ', tags_list);
+}
+// checks search input for errors
+function searchHasError(show) {
+    let search_tags = $('#search_tags');
+    let tags_val = search_tags.val();
+    let error;
+    if (tags_val.length === 0) {
+        error = 'Error: Please add one or more tags.';
+    } 
+    else {
+        let split_tags = tags_val.split(',');
+        for (let i = 0; i < split_tags.length; i++) {
+            tag = split_tags[i].trim();
+            if (!/^\w/.test(tag)) {
+                error = 'Error: Tags should begin or end only with alphabets, numbers or an underscore.' 
+                break;
+            }
+            else if (tag.length < 2) {
+                error = 'Error: Each tag should have at least 2 characters.'
+                break;
+            }
+            else if (/\s/.test(tag)) {
+                error = 'Error: Tags cannot contain spaces.';
+            }
+        }
+    }
+    if (error) {
+        search_tags.css('border-color', 'red');
+        search_tags.focus();
+        if (show) {
+            $('#error').text(error);
+        }
+    }
+    else {
+        search_tags.css('border-color', 'unset');
+        $('#error').text('');
+    }
+    return error;
+
+}
 // creates the preview-window
 function makePreviewWindow() {
     let preview = document.createElement('div');
     preview.id = 'preview-window';
     let img = document.createElement('img');
-    preview.appendChild(img);
+    img.setAttribute('data-id', $(this).parent().parent()[0].id);
     img.src = $(this).parent().parent().children()[0].src;
+    preview.appendChild(img);
     let former = document.createElement('span');
     let latter = document.createElement('span');
     img = document.createElement('img');
@@ -240,21 +326,21 @@ function matchContainerToggle() {
         $('#match-container').css('display', 'none');
     }
 }
-
+// append selected tag from suggestions to the search input
 function autoFill() {
     let match_container = $('#match-container');
     let current_val = getCurrentOptions(); // gets current tags in the input
     let comma = current_val.length > 1 ? ', ' : ''; // adds coma
     return current_val.slice(0, current_val.length - 1).join(', ') + comma; // inserts values to search tags input
 }
-
+// grabs the current tags in the search input, trims them and returns as a list
 function getCurrentOptions() {
     let current_val = $('#search_tags').val().split(',');
     return Array.from(current_val.map(function (item) {
         return item.trim();
     }));
 }
-
+// adds active class to the currently navigates or selected option from suggestion
 function listOptionSelect(key) {
     let search_list = $('#search-option-list')
     let child = search_list.find('li.active');
@@ -264,8 +350,6 @@ function listOptionSelect(key) {
             child.next().addClass('active');
         }
         else {
-            // children = Array.from(search_list.children());
-            // let pos = children.indexOf(child[0]);
             child.prev().addClass('active');
         }
         child.removeClass('active');
@@ -279,22 +363,20 @@ function listOptionSelect(key) {
         }
     }
 }
+// appends currently selected or focus suggested list item to search input
 function selectActiveOption() {
-    console.log('here');
     let child = $('#search-option-list').find('li.active')[0];
     $('#search_tags').val(autoFill() + child.innerText + ', ');
+    dropDownOptions(reduceOptions(getMatchingTags()));
 }
-
+// remove repetitive options from search suggestion
 function reduceOptions(data) {
     let filtered_list = [];
     let flag = false;
     let current_options = getCurrentOptions();
-    console.log('data ', data);
-    console.log('current ', current_options);
     for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < current_options.length; j++) {
             if (current_options[j] === data[i]) {
-                console.log('inside' ,current_options[i])
                 flag = true;
                 break;
             }
@@ -304,6 +386,54 @@ function reduceOptions(data) {
         }
         flag = false;
     }
-    console.log(filtered_list);
     return filtered_list.join(',');
+}
+// navigates preview images
+function navigateImage(ind) {
+    let img = $(this).parent().children()[0];
+    let id = img.getAttribute('data-id');
+    let ele;
+    try {
+        if (ind) {
+            ele = $(`#${id}`).next()[0].children[0];
+        }
+        else {
+            ele = $(`#${id}`).prev()[0].children[0];
+        }
+        img.src = ele.src;
+        img.setAttribute('data-id', ele.parentElement.id);
+        
+    }
+    catch (e) {}
+}
+
+function getMatchingTags() {
+    let matched_list = [];
+    let current_tags = $('#search_tags').val();
+    let temp = current_tags.split(',');
+    tag = temp[temp.length - 1].trim();
+    if (tag.length > 0) {
+        for (let i = 0; i < tags_list.length; i++) {
+            if (tags_list[i].search(new RegExp(tag)) >= 0) {
+                matched_list.push(tags_list[i]);
+            }
+        }
+    }
+    return matched_list;
+}
+function populateFileContainer(data) {
+    let file_container = document.getElementById('file-container');
+    file_container.innerHTML = '';
+    let files = data.split(',');
+    let id = 0
+    files.forEach(file => {
+        let img_box = document.createElement('div');
+        img_box.id = ++id;
+        img_box.className = 'image-box';
+        let img = document.createElement('img');
+        img.src = `./img/${file}`;
+        img_box.appendChild(img);
+        img_box.insertAdjacentHTML('beforeend', "<div class='over'><div class='eye'><img class='over-img' src='./img/eye.svg' alt=' title='View'></div><div class='star'><img class='over-img' src='./img/star.svg' alt=' title='Favorite'></div><div class='trash'><img class='over-img' src='./img/trash.svg' alt=' title='Delete'></div></div>");
+        file_container.appendChild(img_box);
+    });
 }

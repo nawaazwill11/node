@@ -2,79 +2,276 @@
     "files": [
         {
             "id": 1,
-            "filename": "bootstrap.svg",
-            "originalname": "bootstrap.svg",
+            "filename": "arrow.svg",
+            "originalname": "arrow.svg",
             "tags": [
-                "testing"
+                "svg",
+                "icons",
+                "figa",
+                "sample"
             ]
         },
         {
             "id": 2,
-            "filename": "call.svg",
-            "originalname": "call.svg",
+            "filename": "automate.svg",
+            "originalname": "automate.svg",
             "tags": [
-                "testing"
+                "svg",
+                "icons",
+                "figa",
+                "sample"
             ]
         },
         {
             "id": 3,
-            "filename": "career.svg",
-            "originalname": "career.svg",
+            "filename": "bootstrap.svg",
+            "originalname": "bootstrap.svg",
             "tags": [
-                "testing"
+                "svg",
+                "icons",
+                "figa",
+                "sample"
             ]
         },
         {
             "id": 4,
-            "filename": "cross-white.svg",
-            "originalname": "cross-white.svg",
+            "filename": "career.svg",
+            "originalname": "career.svg",
             "tags": [
-                "asd"
+                "svg",
+                "icons",
+                "figa",
+                "sample"
             ]
         },
         {
             "id": 5,
-            "filename": "facebook-white.svg",
-            "originalname": "facebook-white.svg",
+            "filename": "college.svg",
+            "originalname": "college.svg",
             "tags": [
-                "asd"
+                "svg",
+                "icons",
+                "figa",
+                "sample"
+            ]
+        },
+        {
+            "id": 6,
+            "filename": "cross.png",
+            "originalname": "cross.png",
+            "tags": [
+                "svg",
+                "icons",
+                "figa",
+                "sample"
+            ]
+        },
+        {
+            "id": 7,
+            "filename": "css3.svg",
+            "originalname": "css3.svg",
+            "tags": [
+                "svg",
+                "icons",
+                "figa",
+                "sample"
+            ]
+        },
+        {
+            "id": 8,
+            "filename": "form.svg",
+            "originalname": "form.svg",
+            "tags": [
+                "svg",
+                "icons",
+                "figa",
+                "sample"
+            ]
+        },
+        {
+            "id": 9,
+            "filename": "github.svg",
+            "originalname": "github.svg",
+            "tags": [
+                "svg",
+                "icons",
+                "figa",
+                "sample"
+            ]
+        },
+        {
+            "id": 10,
+            "filename": "ham.png",
+            "originalname": "ham.png",
+            "tags": [
+                "svg",
+                "icons",
+                "figa",
+                "sample"
+            ]
+        },
+        {
+            "id": 11,
+            "filename": "nodejs.svg",
+            "originalname": "nodejs.svg",
+            "tags": [
+                "svg",
+                "sample",
+                "programming",
+                "figa"
+            ]
+        },
+        {
+            "id": 12,
+            "filename": "php-logo.svg",
+            "originalname": "php-logo.svg",
+            "tags": [
+                "svg",
+                "sample",
+                "programming",
+                "figa"
+            ]
+        },
+        {
+            "id": 13,
+            "filename": "programming.svg",
+            "originalname": "programming.svg",
+            "tags": [
+                "svg",
+                "sample",
+                "programming",
+                "figa"
+            ]
+        },
+        {
+            "id": 14,
+            "filename": "python.png",
+            "originalname": "python.png",
+            "tags": [
+                "svg",
+                "sample",
+                "programming",
+                "figa"
+            ]
+        },
+        {
+            "id": 15,
+            "filename": "python.svg",
+            "originalname": "python.svg",
+            "tags": [
+                "svg",
+                "sample",
+                "programming",
+                "figa"
+            ]
+        },
+        {
+            "id": 16,
+            "filename": "scroll-up.png",
+            "originalname": "scroll-up.png",
+            "tags": [
+                "svg",
+                "sample",
+                "programming",
+                "figa"
             ]
         }
     ],
     "tags": [
         {
             "id": 1,
-            "tagname": "testing",
+            "tagname": "svg",
             "assocfiles": [
+                "arrow.svg",
+                "automate.svg",
                 "bootstrap.svg",
-                "call.svg",
-                "career.svg"
+                "career.svg",
+                "college.svg",
+                "cross.png",
+                "css3.svg",
+                "form.svg",
+                "github.svg",
+                "ham.png",
+                "nodejs.svg",
+                "php-logo.svg",
+                "programming.svg",
+                "python.png",
+                "python.svg",
+                "scroll-up.png"
             ]
         },
         {
             "id": 2,
-            "tagname": "asd",
+            "tagname": "icons",
             "assocfiles": [
-                "cross-white.svg",
-                "facebook-white.svg"
+                "arrow.svg",
+                "automate.svg",
+                "bootstrap.svg",
+                "career.svg",
+                "college.svg",
+                "cross.png",
+                "css3.svg",
+                "form.svg",
+                "github.svg",
+                "ham.png"
             ]
         },
         {
             "id": 3,
-            "tagname": "aspirin",
+            "tagname": "figa",
             "assocfiles": [
-                "cross-white.svg",
-                "facebook-white.svg"
+                "arrow.svg",
+                "automate.svg",
+                "bootstrap.svg",
+                "career.svg",
+                "college.svg",
+                "cross.png",
+                "css3.svg",
+                "form.svg",
+                "github.svg",
+                "ham.png",
+                "nodejs.svg",
+                "php-logo.svg",
+                "programming.svg",
+                "python.png",
+                "python.svg",
+                "scroll-up.png"
             ]
         },
         {
             "id": 4,
-            "tagname": "testicle",
+            "tagname": "sample",
             "assocfiles": [
-                "cross-white.svg",
-                "facebook-white.svg"
+                "arrow.svg",
+                "automate.svg",
+                "bootstrap.svg",
+                "career.svg",
+                "college.svg",
+                "cross.png",
+                "css3.svg",
+                "form.svg",
+                "github.svg",
+                "ham.png",
+                "nodejs.svg",
+                "php-logo.svg",
+                "programming.svg",
+                "python.png",
+                "python.svg",
+                "scroll-up.png"
+            ]
+        },
+        {
+            "id": 5,
+            "tagname": "programming",
+            "assocfiles": [
+                "nodejs.svg",
+                "php-logo.svg",
+                "programming.svg",
+                "python.png",
+                "python.svg",
+                "scroll-up.png"
             ]
         }
     ],
-    "lastId": 2
+    "lastId": 16
 }
