@@ -5,10 +5,7 @@
             "filename": "arrow.svg",
             "originalname": "arrow.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
@@ -16,10 +13,7 @@
             "filename": "automate.svg",
             "originalname": "automate.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
@@ -27,251 +21,101 @@
             "filename": "bootstrap.svg",
             "originalname": "bootstrap.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 4,
-            "filename": "career.svg",
-            "originalname": "career.svg",
+            "filename": "call.svg",
+            "originalname": "call.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 5,
-            "filename": "college.svg",
-            "originalname": "college.svg",
+            "filename": "career.svg",
+            "originalname": "career.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 6,
-            "filename": "cross.png",
-            "originalname": "cross.png",
+            "filename": "close.svg",
+            "originalname": "close.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 7,
-            "filename": "css3.svg",
-            "originalname": "css3.svg",
+            "filename": "ham-white.svg",
+            "originalname": "ham-white.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 8,
-            "filename": "form.svg",
-            "originalname": "form.svg",
+            "filename": "hobby.svg",
+            "originalname": "hobby.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 9,
-            "filename": "github.svg",
-            "originalname": "github.svg",
+            "filename": "html-5.svg",
+            "originalname": "html-5.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 10,
-            "filename": "ham.png",
-            "originalname": "ham.png",
+            "filename": "icons8-facebook.svg",
+            "originalname": "icons8-facebook.svg",
             "tags": [
-                "svg",
-                "icons",
-                "figa",
-                "sample"
+                "hehehe"
             ]
         },
         {
             "id": 11,
-            "filename": "nodejs.svg",
-            "originalname": "nodejs.svg",
+            "filename": "idea.svg",
+            "originalname": "idea.svg",
             "tags": [
-                "svg",
-                "sample",
-                "programming",
-                "figa"
+                "hehehe"
             ]
         },
         {
             "id": 12,
-            "filename": "php-logo.svg",
-            "originalname": "php-logo.svg",
+            "filename": "instagram.svg",
+            "originalname": "instagram.svg",
             "tags": [
-                "svg",
-                "sample",
-                "programming",
-                "figa"
-            ]
-        },
-        {
-            "id": 13,
-            "filename": "programming.svg",
-            "originalname": "programming.svg",
-            "tags": [
-                "svg",
-                "sample",
-                "programming",
-                "figa"
-            ]
-        },
-        {
-            "id": 14,
-            "filename": "python.png",
-            "originalname": "python.png",
-            "tags": [
-                "svg",
-                "sample",
-                "programming",
-                "figa"
-            ]
-        },
-        {
-            "id": 15,
-            "filename": "python.svg",
-            "originalname": "python.svg",
-            "tags": [
-                "svg",
-                "sample",
-                "programming",
-                "figa"
-            ]
-        },
-        {
-            "id": 16,
-            "filename": "scroll-up.png",
-            "originalname": "scroll-up.png",
-            "tags": [
-                "svg",
-                "sample",
-                "programming",
-                "figa"
+                "hehehe"
             ]
         }
     ],
     "tags": [
         {
             "id": 1,
-            "tagname": "svg",
+            "tagname": "hehehe",
             "assocfiles": [
                 "arrow.svg",
                 "automate.svg",
                 "bootstrap.svg",
+                "call.svg",
                 "career.svg",
-                "college.svg",
-                "cross.png",
-                "css3.svg",
-                "form.svg",
-                "github.svg",
-                "ham.png",
-                "nodejs.svg",
-                "php-logo.svg",
-                "programming.svg",
-                "python.png",
-                "python.svg",
-                "scroll-up.png"
-            ]
-        },
-        {
-            "id": 2,
-            "tagname": "icons",
-            "assocfiles": [
-                "arrow.svg",
-                "automate.svg",
-                "bootstrap.svg",
-                "career.svg",
-                "college.svg",
-                "cross.png",
-                "css3.svg",
-                "form.svg",
-                "github.svg",
-                "ham.png"
-            ]
-        },
-        {
-            "id": 3,
-            "tagname": "figa",
-            "assocfiles": [
-                "arrow.svg",
-                "automate.svg",
-                "bootstrap.svg",
-                "career.svg",
-                "college.svg",
-                "cross.png",
-                "css3.svg",
-                "form.svg",
-                "github.svg",
-                "ham.png",
-                "nodejs.svg",
-                "php-logo.svg",
-                "programming.svg",
-                "python.png",
-                "python.svg",
-                "scroll-up.png"
-            ]
-        },
-        {
-            "id": 4,
-            "tagname": "sample",
-            "assocfiles": [
-                "arrow.svg",
-                "automate.svg",
-                "bootstrap.svg",
-                "career.svg",
-                "college.svg",
-                "cross.png",
-                "css3.svg",
-                "form.svg",
-                "github.svg",
-                "ham.png",
-                "nodejs.svg",
-                "php-logo.svg",
-                "programming.svg",
-                "python.png",
-                "python.svg",
-                "scroll-up.png"
-            ]
-        },
-        {
-            "id": 5,
-            "tagname": "programming",
-            "assocfiles": [
-                "nodejs.svg",
-                "php-logo.svg",
-                "programming.svg",
-                "python.png",
-                "python.svg",
-                "scroll-up.png"
+                "close.svg",
+                "ham-white.svg",
+                "hobby.svg",
+                "html-5.svg",
+                "icons8-facebook.svg",
+                "idea.svg",
+                "instagram.svg"
             ]
         }
     ],
-    "lastId": 16
+    "lastId": 12
 }

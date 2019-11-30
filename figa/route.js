@@ -81,18 +81,21 @@ router.post('/upload', (request, response) => {
     upload.upload(request, response);
 });
 // request uploaded images
-router.get(/\/data\/([a-z\.\-\_0-9]+\.[a-z0-9])/, (request, response) => {
+router.get(/\/data\/([a-z\.\-\_0-9]+\.[a-z0-9]+)/i, (request, response) => {
     let dir = 'uploads';
     let url = `/${dir}` + request.url.slice(request.url.lastIndexOf('/'), );
     fs.readdir(dir, (error, files) => {
         if (error) return console.error(error);
         let ext = url.slice(url.lastIndexOf('.') + 1, );
+        console.log('extension: ', ext);
         for (let i = 0; i < files.length; i++) {
             if (`/${dir}/${files[i]}` === url) {
                 if (ext === 'svg'){
+                    console.log('in jpg');
                     response.writeHead(200, {'Content-type': 'image/svg+xml'});
                 }
-                else if (ext in ['jpg, jpeg']) {
+                else if (ext === 'jpg' || ext === 'jpeg') {
+                    console.log('in jpg');
                     response.writeHead(200, {'Content-type': 'image/jpeg'});
                 }
                 else if (ext === 'png') {

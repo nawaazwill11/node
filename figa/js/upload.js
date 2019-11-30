@@ -1,7 +1,7 @@
 let add_image = document.getElementById('add-image');
 let upload_inp = document.getElementById('upload-inp');
 let stage = document.getElementById('upload-stage');
-let uploaded_files;
+let uploaded_files = [];
 let description = document.getElementById('total_upload');
 let file_types = [
     'image/jpeg',
@@ -14,19 +14,23 @@ add_image.addEventListener('click', e => {
 });
 
 upload_inp.addEventListener('change', e => {
-    uploaded_files = upload_inp.files;
-    if (uploaded_files.length === 0) {
+    let files = []
+    Array.from(upload_inp.files).forEach(file => {
+        files.push(file);
+    });
+    // uploaded_files = upload_inp.files;
+    if (files.length === 0) {
         description.textContent = 'No files selected.';
     }
     else{
         new Promise((resolve, reject) => {
-            for (let i = 0; i < uploaded_files.length; i++){
-                if (validFileType(uploaded_files[i])) {
+            for (let i = 0; i < files.length; i++){
+                if (validFileType(files[i])) {
                     let image_box = document.createElement('div');
-                    image_box.id = uploaded_files[i].name;
+                    image_box.id = files[i].name;
                     image_box.className = 'image-box';
                     let img = document.createElement('img');
-                    img.src = window.URL.createObjectURL(uploaded_files[i]);
+                    img.src = window.URL.createObjectURL(files[i]);
                     image_box.appendChild(img);
                     stage.appendChild(image_box);
                     let del = document.createElement('span');
@@ -42,13 +46,14 @@ upload_inp.addEventListener('change', e => {
                     resolve()
                 }
                 else {
-                    description.textContent = `Cannot upload ${uploaded_files[i].name}, not a valid image.`
+                    description.textContent = `Cannot upload ${files[i].name}, not a valid image.`
                     reject()
                 }
             }
         })
         .then(() => {
             descImageCount();
+            uploaded_files = [...uploaded_files, ...files];
         })
         .catch(error => {
             console.error(error);
@@ -82,7 +87,6 @@ function validFileType(file) {
 
 $('#uploadForm').on('click', '#upload-do', function (e) {
     event.stopPropagation();
-    let formData = new FormData(document.forms.uploadForm);
     let tags = $('#tags');
     let tags_val = tags.val();
     let error = null;
@@ -116,6 +120,15 @@ $('#uploadForm').on('click', '#upload-do', function (e) {
     }
 
     else {
+        let formData = new FormData();
+        formData.append('tags', tags_val);
+        
+        let files = uploaded_files;
+        for (let i = 0; i < files.length; i++) {
+            formData.append('images', files[i]);
+            console.log(files[i]);
+        }
+
         let butter_paper = document.getElementById('butter-paper');
         butter_paper.classList.add('show');
         $.ajax({
@@ -141,23 +154,23 @@ $('#uploadForm').on('click', '#upload-do', function (e) {
 function postUpload(data) {
     if (data !== 'Uploaded.') {
         let response = JSON.parse(data);
-        showOnlyDuplicates(response['duplicates']);
-        console.log('response: ', response);
         if (response['duplicates'].length > 0) {
             let message = response['duplicates'].join(', ');
             let reupload = confirm(`Duplicates found.\nCannot upload: ${message}\nRetry with different files or file names.`);
             // if (reupload) {
 
             // }
+            showOnlyDuplicates(response['duplicates']);
         }
     }
     else {
         alert('Upload successfully.')
-        for (let i = 1; i < stage.childElementCount; i++) {
-            stage.children[i].remove();
-        }
+        let remove_ele = Array.from(stage.children).slice(1, );
+        remove_ele.forEach(ele => {
+            ele.remove();
+        });
         descImageCount();
-        $('#tag').val('');
+        $('#tags').val('');
         console.log('Uploaded successfully.')
     }
 }
