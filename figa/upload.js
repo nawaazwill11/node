@@ -115,18 +115,18 @@ function updateDB(filename, tags, callback) {
 // saves files to disk
 function saveFile(file, tags, callback) {
     try {
-        file['file'].pipe(fs.createWriteStream(`./uploads/${file.filename}`));
+        file['file'].pipe(fs.createWriteStream(`${process.cwd()}/uploads/${file.filename}`));
         updateDB(file.filename, tags, err => {
             if (err) {
                 error.field_error = err;
                 return false;
-            }
-            
+            } 
             console.log(file.filename, ' added to db');
         });
         callback(null);
     }
     catch (err) {
+        console.log(err);
         callback(err);
     }
 }
