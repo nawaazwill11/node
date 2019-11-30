@@ -95,6 +95,102 @@
             "tags": [
                 "hehehe"
             ]
+        },
+        {
+            "id": 13,
+            "filename": "2019-10-28-094737.jpg",
+            "originalname": "2019-10-28-094737.jpg",
+            "tags": [
+                "cam"
+            ]
+        },
+        {
+            "id": 14,
+            "filename": "2019-10-28-094758.jpg",
+            "originalname": "2019-10-28-094758.jpg",
+            "tags": [
+                "cam"
+            ]
+        },
+        {
+            "id": 15,
+            "filename": "_DLS1909.jpg",
+            "originalname": "_DLS1909.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 16,
+            "filename": "_DLS1910.jpg",
+            "originalname": "_DLS1910.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 17,
+            "filename": "_DLS1912.jpg",
+            "originalname": "_DLS1912.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 18,
+            "filename": "_DLS1917.jpg",
+            "originalname": "_DLS1917.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 19,
+            "filename": "_DLS1918.jpg",
+            "originalname": "_DLS1918.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 20,
+            "filename": "_DLS1920.jpg",
+            "originalname": "_DLS1920.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 21,
+            "filename": "_DLS1922.jpg",
+            "originalname": "_DLS1922.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 22,
+            "filename": "_DLS1924.jpg",
+            "originalname": "_DLS1924.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 23,
+            "filename": "_DLS1925.jpg",
+            "originalname": "_DLS1925.jpg",
+            "tags": [
+                "dslr"
+            ]
+        },
+        {
+            "id": 24,
+            "filename": "_DLS1926.jpg",
+            "originalname": "_DLS1926.jpg",
+            "tags": [
+                "dslr"
+            ]
         }
     ],
     "tags": [
@@ -115,7 +211,31 @@
                 "idea.svg",
                 "instagram.svg"
             ]
+        },
+        {
+            "id": 2,
+            "tagname": "cam",
+            "assocfiles": [
+                "2019-10-28-094737.jpg",
+                "2019-10-28-094758.jpg"
+            ]
+        },
+        {
+            "id": 3,
+            "tagname": "dslr",
+            "assocfiles": [
+                "_DLS1909.jpg",
+                "_DLS1910.jpg",
+                "_DLS1912.jpg",
+                "_DLS1917.jpg",
+                "_DLS1918.jpg",
+                "_DLS1920.jpg",
+                "_DLS1922.jpg",
+                "_DLS1924.jpg",
+                "_DLS1925.jpg",
+                "_DLS1926.jpg"
+            ]
         }
     ],
-    "lastId": 12
+    "lastId": 24
 }

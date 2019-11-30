@@ -12,10 +12,14 @@ body {
 
 }
 #navbar {
+    display: flex;
     background-color: black;
+}
+#navbar * {
     color: white;
 }
 #site {
+    flex: 10;
     height: auto;
     padding: 30px;
 }
@@ -26,6 +30,22 @@ body {
     color: white;
     font-weight: bold;
     position: relative;
+}
+#nav-right {
+    flex: 5;
+}
+#nav-list {
+    display: flex;
+    margin-right: 60px;
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    align-items: center;
+}
+#nav-list li {
+    list-style: none;
+    flex: 1;
+    font-size: 2em;  
 }
 #photo-container {
     display: flex;

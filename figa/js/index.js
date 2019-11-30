@@ -71,6 +71,15 @@ $('#search_control').mousedown(function () {
 $('#search_control').mouseup(function () {
     $(this).css({'border-style': 'none', 'width': '31px'});
 });
+$('#search_control').keydown(function (e) {
+    $(this).css({'border-style': 'inset', 'width': '25px'});
+    if (e.keyCode === 13) {
+        $(this).click();
+    }
+});
+$('#search_control').keyup(function (e) {
+    $(this).css({'border-style': 'none', 'width': '31px'});
+});
 // previous image
 $('body').on('click', '#former', function () {
     navigateImage.bind($(this))(0);
@@ -422,8 +431,8 @@ function getMatchingTags() {
     return matched_list;
 }
 function populateFileContainer(data) {
+    let file_container = document.getElementById('file-container');
     if (data.length > 0) {
-        let file_container = document.getElementById('file-container');
         file_container.innerHTML = '';
         let files = data.split(',');
         let id = 0
@@ -438,9 +447,13 @@ function populateFileContainer(data) {
             img_box.insertAdjacentHTML('beforeend', "<div class='over'><div class='eye'><img class='over-img' src='./img/eye.svg' alt=' title='View'></div><div class='star'><img class='over-img' src='./img/star.svg' alt=' title='Favorite'></div><div class='trash'><img class='over-img' src='./img/trash.svg' alt=' title='Delete'></div></div>");
             file_container.appendChild(img_box);
         });
+        searchResultCount();
     }
     else {
         multiActive(0);
+        file_container.innerHTML = '';
+        searchResultCount();
+        file_container.insertAdjacentHTML('beforeend', "<div id='empty-container'><p id='no-text'>No files found</p></div>");
         alert('No result were found');
     }
 }
@@ -456,4 +469,7 @@ function multiActive(active) {
             child.style.pointerEvents = 'none';
         });
     }
+}
+function searchResultCount() {
+    $('#search-match').text($('#file-container').children().length);
 }

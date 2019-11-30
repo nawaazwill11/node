@@ -16,21 +16,40 @@ body {
 
 }
 #navbar {
+    display: flex;
     background-color: black;
+}
+#navbar * {
     color: white;
 }
 #site {
+    flex: 10;
     height: auto;
     padding: 30px;
 }
 #site-name {
     font-size: 3em;
     margin: 0 !important;
-    
     text-decoration: none;
     color: white;
     font-weight: bold;
     position: relative;
+}
+#nav-right {
+    flex: 5;
+}
+#nav-list {
+    display: flex;
+    margin-right: 60px;
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    align-items: center;
+}
+#nav-list li {
+    list-style: none;
+    flex: 1;
+    font-size: 2em;  
 }
 #upload-root {
     position: relative;
