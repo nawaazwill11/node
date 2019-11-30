@@ -116,7 +116,7 @@ function updateDB(filename, tags, callback) {
 // saves files to disk
 function saveFile(file, tags, callback) {
     try {
-        file['file'].pipe(fs.createWriteStream(`./img/${file.filename}`));
+        file['file'].pipe(fs.createWriteStream(`./uploads/${file.filename}`));
         updateDB(file.filename, tags, err => {
             if (err) {
                 error.field_error = err;

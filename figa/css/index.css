@@ -125,6 +125,9 @@ body {
     transform: scale(1.2);
     pointer-events: none;
 }
+#selector label {
+    pointer-events: none;
+}
 #options {
     display: flex;
     flex: 5;

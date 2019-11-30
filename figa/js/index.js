@@ -422,18 +422,38 @@ function getMatchingTags() {
     return matched_list;
 }
 function populateFileContainer(data) {
-    let file_container = document.getElementById('file-container');
-    file_container.innerHTML = '';
-    let files = data.split(',');
-    let id = 0
-    files.forEach(file => {
-        let img_box = document.createElement('div');
-        img_box.id = ++id;
-        img_box.className = 'image-box';
-        let img = document.createElement('img');
-        img.src = `./img/${file}`;
-        img_box.appendChild(img);
-        img_box.insertAdjacentHTML('beforeend', "<div class='over'><div class='eye'><img class='over-img' src='./img/eye.svg' alt=' title='View'></div><div class='star'><img class='over-img' src='./img/star.svg' alt=' title='Favorite'></div><div class='trash'><img class='over-img' src='./img/trash.svg' alt=' title='Delete'></div></div>");
-        file_container.appendChild(img_box);
-    });
+    if (data.length > 0) {
+        let file_container = document.getElementById('file-container');
+        file_container.innerHTML = '';
+        let files = data.split(',');
+        let id = 0
+        multiActive(1);
+        files.forEach(file => {
+            let img_box = document.createElement('div');
+            img_box.id = ++id;
+            img_box.className = 'image-box';
+            let img = document.createElement('img');
+            img.src = `./data/${file}`;
+            img_box.appendChild(img);
+            img_box.insertAdjacentHTML('beforeend', "<div class='over'><div class='eye'><img class='over-img' src='./img/eye.svg' alt=' title='View'></div><div class='star'><img class='over-img' src='./img/star.svg' alt=' title='Favorite'></div><div class='trash'><img class='over-img' src='./img/trash.svg' alt=' title='Delete'></div></div>");
+            file_container.appendChild(img_box);
+        });
+    }
+    else {
+        multiActive(0);
+        alert('No result were found');
+    }
+}
+function multiActive(active) {
+    let selector = $('#selector');
+    if (active) {
+        Array.from(selector.children()).forEach(child => {
+            child.style.pointerEvents = 'unset';
+        });
+    }
+    else {
+        Array.from(selector.children()).forEach(child => {
+            child.style.pointerEvents = 'none';
+        });
+    }
 }

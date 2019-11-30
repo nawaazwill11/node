@@ -4,6 +4,7 @@ let DB = require('./db');
 let db;
 
 function makeTagsList() {
+    
     return db.tags.map(tagObj => tagObj.tagname);
 }
 

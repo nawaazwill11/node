@@ -108,7 +108,6 @@ router.get(/\/data\/([a-z\.\-\_0-9]+\.[a-z0-9])/, (request, response) => {
 });
 // view uploaded files
 router.get('/view',  (request, response) => {
-    console.log('here');
     response.writeHead(200, {'Content-Type': 'text/html'});
     fs.createReadStream(template['view']).pipe(response);
 });

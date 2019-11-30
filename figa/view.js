@@ -1,6 +1,5 @@
 const fs = require('fs');
 const db_path = './data.json';
-let db;
 
 async function getFilesList(response) {
     new Promise((resolve, reject) => {
@@ -14,8 +13,12 @@ async function getFilesList(response) {
     })
     .then(data => {
         data = JSON.parse(data);
+        let files_list = [];
+        data.files.map(file => {
+            files_list.push(file.filename);
+        });
         response.writeHead(200, {'Content-Type': 'text/plain'});
-        response.end(data.files_list.toString());
+        response.end(files_list.toString());
     })
     .catch(error => {
         console.log(error);
