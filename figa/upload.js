@@ -102,7 +102,6 @@ function updateDB(filename, tags, callback) {
     console.log('adding new file object');
     db.files.push(newFileObj(filename, tags));
     updateTags(tags, filename);
-    db.lastId += 1;
     DB.updateDB(db)
         .then(db => {
             console.log('Promise complete.');
