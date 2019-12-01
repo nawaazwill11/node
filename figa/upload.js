@@ -261,21 +261,26 @@ async function upload(request, response) {
     });
     // parsing files 
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        if (!flag) {
-            if (validFileType(mimetype)) {
-                uploadFiles({
-                    filename: filename,
-                    file: file,
-                }, tags);
+        try {    
+            if (!flag) {
+                if (validFileType(mimetype)) {
+                    uploadFiles({
+                        filename: filename,
+                        file: file,
+                    }, tags);
+                }
+                else {
+                    addError('Internal error: Unsupported file type. Please retry.', 'file_error');
+                    file.resume();
+                }
             }
             else {
-                addError('Internal error: Unsupported file type. Please retry.', 'file_error');
+                addError('Internal error: Unresolved errors. Please refresh the page and retry.', 'field_error');
                 file.resume();
             }
         }
-        else {
-            addError('Internal error: Unresolved errors. Please refresh the page and retry.', 'field_error');
-            file.resume();
+        catch (e) {
+            console.log("Error handled: ", e);
         }
     });
     // parsing ends

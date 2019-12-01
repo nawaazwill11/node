@@ -1,4 +1,66 @@
 {
-    "files": [],
-    "tags": []
+    "files": [
+        {
+            "id": 1,
+            "filename": "arrow.svg",
+            "originalname": "arrow.svg",
+            "tags": [
+                "test"
+            ]
+        },
+        {
+            "id": 2,
+            "filename": "automate.svg",
+            "originalname": "automate.svg",
+            "tags": [
+                "test"
+            ]
+        },
+        {
+            "id": 3,
+            "filename": "bootstrap.svg",
+            "originalname": "bootstrap.svg",
+            "tags": [
+                "test"
+            ]
+        },
+        {
+            "id": 4,
+            "filename": "call.svg",
+            "originalname": "call.svg",
+            "tags": [
+                "test"
+            ]
+        },
+        {
+            "id": 5,
+            "filename": "career.svg",
+            "originalname": "career.svg",
+            "tags": [
+                "test"
+            ]
+        },
+        {
+            "id": 6,
+            "filename": "close.svg",
+            "originalname": "close.svg",
+            "tags": [
+                "test"
+            ]
+        }
+    ],
+    "tags": [
+        {
+            "id": 1,
+            "tagname": "test",
+            "assocfiles": [
+                "arrow.svg",
+                "automate.svg",
+                "bootstrap.svg",
+                "call.svg",
+                "career.svg",
+                "close.svg"
+            ]
+        }
+    ]
 }
