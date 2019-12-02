@@ -3,6 +3,7 @@ const fs = require('fs');
      // access file system
 const DB = require('./db');
 const path = require('path');
+const tinify = require('./tinify');
 let files_list = [];               // stores uploaded files names
 let duplicates = [];              // stores duplicate file during form parsing
 let db;                          // globally accessible json database
@@ -326,46 +327,11 @@ async function upload(request, response) {
     });
     // parsing ends
     busboy.on('finish', async function() {
-        await compress(response);
+        await tinify.compress(error, response);
         console.log('Done parsing form!');
     });
     request.pipe(busboy);
 }
 
-function validCompressType(file) {
-    let ext = file.slice(file.lastIndexOf('.'), );
-    for (let i = 0; i < compress_types.length; i++) {
-        if (ext === compress_types[i]) return true;
-    }
-    return false;
-}
-
-function compress(response) {
-    console.log('compressing now...');
-    const tinify = require('tinify');
-    tinify.key = 'yGnKjQ2B62VWs5kSy4rBZ32lRdXcdDHX';
-    const path = './uploads';
-    new Promise((resolve, reject) => {
-        resolve(fs.readdirSync(path));
-    })
-    .then(files => {
-        files.forEach(async (file) => {
-            if (validCompressType(file)){
-                console.log('Compressing: ', file);
-                const source = tinify.fromFile(path + '/' + file);
-                await source.toFile(`./compressed/${file}`)
-                .then((result) => {
-                    console.log(file, ' compressed');
-                })
-                .catch(error => {
-                    console.log('Cannot compress: ', file);
-                });
-            }
-        });
-        console.log('Finished compression process.');
-        finalOp(error, response);
-    });
-    
-}
     function done() {}
     module.exports = { upload } // upload function accessible using form.upload
