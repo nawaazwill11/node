@@ -2,64 +2,36 @@
     "files": [
         {
             "id": 1,
-            "filename": "arrow.svg",
-            "originalname": "arrow.svg",
+            "filename": "Screenshot from 2019-10-26 11-49-28.png",
+            "originalname": "Screenshot from 2019-10-26 11-49-28.png",
             "tags": [
-                "test"
+                "com"
             ]
         },
         {
             "id": 2,
-            "filename": "automate.svg",
-            "originalname": "automate.svg",
+            "filename": "Screenshot from 2019-11-07 22-25-52.png",
+            "originalname": "Screenshot from 2019-11-07 22-25-52.png",
             "tags": [
-                "test"
+                "com"
             ]
         },
         {
             "id": 3,
-            "filename": "bootstrap.svg",
-            "originalname": "bootstrap.svg",
+            "filename": "Screenshot from 2019-11-07 22-26-54.png",
+            "originalname": "Screenshot from 2019-11-07 22-26-54.png",
             "tags": [
-                "test"
-            ]
-        },
-        {
-            "id": 4,
-            "filename": "call.svg",
-            "originalname": "call.svg",
-            "tags": [
-                "test"
-            ]
-        },
-        {
-            "id": 5,
-            "filename": "career.svg",
-            "originalname": "career.svg",
-            "tags": [
-                "test"
-            ]
-        },
-        {
-            "id": 6,
-            "filename": "close.svg",
-            "originalname": "close.svg",
-            "tags": [
-                "test"
+                "com"
             ]
         }
     ],
     "tags": [
         {
             "id": 1,
-            "tagname": "test",
+            "tagname": "com",
             "assocfiles": [
-                "arrow.svg",
-                "automate.svg",
-                "bootstrap.svg",
-                "call.svg",
-                "career.svg",
-                "close.svg"
+                "Screenshot from 2019-11-07 22-25-52.png",
+                "Screenshot from 2019-11-07 22-26-54.png"
             ]
         }
     ]

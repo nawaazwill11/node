@@ -14,57 +14,61 @@ add_image.addEventListener('click', e => {
 });
 
 upload_inp.addEventListener('change', e => {
-    let files = []
-    Array.from(upload_inp.files).forEach(file => {
-        files.push(file);
-    });
-    // uploaded_files = upload_inp.files;
-    if (files.length === 0) {
-        description.textContent = 'No files selected.';
-    }
-    else{
-        new Promise((resolve, reject) => {
-            for (let i = 0; i < files.length; i++){
-                if (validFileType(files[i])) {
-                    let image_box = document.createElement('div');
-                    image_box.id = files[i].name;
-                    image_box.className = 'image-box';
-                    let img = document.createElement('img');
-                    img.src = window.URL.createObjectURL(files[i]);
-                    image_box.appendChild(img);
-                    stage.appendChild(image_box);
-                    let del = document.createElement('span');
-                    del.className = 'delete';
-                    del.addEventListener('click', function () {
-                        let remove = dropImage.bind(this);
-                        remove();
-                    });
-                    let del_img = document.createElement('img');
-                    del_img.src = '/img/delete.svg';
-                    del.appendChild(del_img);
-                    image_box.appendChild(del);
-                    resolve()
-                }
-                else {
-                    description.textContent = `Cannot upload ${files[i].name}, not a valid image.`
-                    reject()
-                }
+    let raw_files = upload_inp.files;
+    if (raw_files.length > 0) {
+        Array.from(raw_files).forEach(file => {
+            if (validFileType(file) && notDuplicate(file.name)) {
+                uploaded_files = [...uploaded_files, ...[file]];
+                let image_box = document.createElement('div');
+                image_box.id = file.name;
+                image_box.className = 'image-box';
+                let img = document.createElement('img');
+                img.src = window.URL.createObjectURL(file);
+                image_box.appendChild(img);
+                stage.appendChild(image_box);
+                let del = document.createElement('span');
+                del.className = 'delete';
+                del.addEventListener('click', function () {
+                    let remove = dropImage.bind(this);
+                    remove();
+                });
+                let del_img = document.createElement('img');
+                del_img.src = '/img/delete.svg';
+                del.appendChild(del_img);
+                image_box.appendChild(del);
             }
-        })
-        .then(() => {
-            descImageCount();
-            uploaded_files = [...uploaded_files, ...files];
-        })
-        .catch(error => {
-            console.error(error);
+            else {
+                description.textContent = `Cannot upload ${file.name}, not a valid image.`
+            }
         });
+        descImageCount();
     }
 
 });
 
+function notDuplicate(filename) {
+    for (index in uploaded_files) {
+        if (uploaded_files[index].name === filename) {
+            return false;
+        }
+    }
+    return true;
+}
+
 function descImageCount() {
     let description = document.getElementById('total_upload');
     description.innerHTML = `<b>Total files:</b> ${stage.childElementCount - 1}`;
+}
+
+function removeFileFromUploadedFiles(filename) {
+    let i = 0;
+    for (; i < uploaded_files.length; i++) {
+        if (filename == uploaded_files[i].name) {
+            break;
+        }
+    }
+    uploaded_files.splice(i, 1);
+    upload_inp.value = null;
 }
 
 function dropImage(that) {
@@ -73,7 +77,9 @@ function dropImage(that) {
     }
     that.parentNode.remove(that.parentNode);
     // this.parentNode.remove(this.parentNode);
+    removeFileFromUploadedFiles(that.parentNode.id);
     descImageCount();
+
 }
 
 function validFileType(file) {
@@ -169,10 +175,12 @@ function postUpload(data) {
         remove_ele.forEach(ele => {
             ele.remove();
         });
+        document.getElementById('upload-inp').value = null;
         descImageCount();
         $('#tags').val('');
         console.log('Uploaded successfully.')
     }
+    uploaded_files = [];
 }
 
 function showOnlyDuplicates(dup_list) {

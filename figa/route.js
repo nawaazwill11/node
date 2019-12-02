@@ -82,7 +82,7 @@ router.post('/upload', (request, response) => {
 });
 // request uploaded images
 router.get(/\/data\/([a-z\.\-\_0-9]+\.[a-z0-9]+)/i, (request, response) => {
-    let dir = 'uploads';
+    let dir = 'compressed';
     let url = `/${dir}` + request.url.slice(request.url.lastIndexOf('/'), );
     fs.readdir(dir, (error, files) => {
         if (error) return console.error(error);

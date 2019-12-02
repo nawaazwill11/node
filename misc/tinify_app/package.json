@@ -1,0 +1,21 @@
+{
+  "name": "tinify_app",
+  "version": "1.0.0",
+  "description": "Tinyfy image compression testing app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "tinify",
+    "compress",
+    "image",
+    "imagecompress"
+  ],
+  "author": "Nawaaz N. k.",
+  "license": "ISC",
+  "dependencies": {
+    "tinify": "^1.6.0-beta.2"
+  }
+}

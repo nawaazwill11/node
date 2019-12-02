@@ -2,14 +2,21 @@ const Busboy = require('busboy'); // busboy class
 const fs = require('fs');    
      // access file system
 const DB = require('./db');
+const path = require('path');
 let files_list = [];               // stores uploaded files names
 let duplicates = [];              // stores duplicate file during form parsing
 let db;                          // globally accessible json database
+let tag_added;
 // stores file and field error during form parsing
 let error = {
     'file_error': null,
-    'field_error': null
+    'field_error': null,
+    refresh() {
+        this['file_error'] = null;
+        this['field_error'] = null;
+    }
 }
+
 // supported file types
 let file_types = [
     'image/jpeg',
@@ -17,7 +24,26 @@ let file_types = [
     'image/svg+xml',
     'image/gif'
 ];
+let compress_types = [
+    '.png',
+    '.jpg',
+    '.jpeg'
+]
 let flag = false;   // indicated error occurrence
+
+function emptyUploads() {
+    let upload_dir = './uploads';
+    fs.readdir('./uploads', (error, files) => {
+        if (error) throw error;
+        for (let file of files) {
+            fs.unlink(path.join(upload_dir, file), (error) => {
+                if (error) throw error;
+            });
+        }
+        console.log('uploads empty');
+    })
+}
+
 function validFileType(filetype) {
     for (let i = 0; i < file_types.length; i++) {
         if (file_types[i] === filetype) {
@@ -98,7 +124,7 @@ function updateTags(tags, filename) {
 }
 
 // updates the database with new file object
-function updateDB(filename, tags, callback) {
+function updateFileToDB(filename, tags, callback) {
     console.log('adding new file object');
     db.files.push(newFileObj(filename, tags));
     updateTags(tags, filename);
@@ -114,21 +140,34 @@ function updateDB(filename, tags, callback) {
 
 // saves files to disk
 function saveFile(file, tags, callback) {
-    try {
-        file['file'].pipe(fs.createWriteStream(`${process.cwd()}/uploads/${file.filename}`));
-        updateDB(file.filename, tags, err => {
+    new Promise((resolve, reject) => {
+        try {
+            file['file'].pipe(fs.createWriteStream(`${process.cwd()}/uploads/${file.filename}`))
+            resolve(file);
+        }
+        catch (err) {
+            console.log(err);
+            reject(err);
+        }
+    })
+    .then(file => {
+        updateFileToDB(file.filename, tags, err => {
             if (err) {
-                error.field_error = err;
+                callback(err);
                 return false;
+            }
+            if (!tag_added) {
+                addTags(tags);
             } 
             console.log(file.filename, ' added to db');
         });
         callback(null);
-    }
-    catch (err) {
-        console.log(err);
+
+    })
+    .catch(err => {
         callback(err);
-    }
+    })
+    
 }
 
 function fileExists(filename) {
@@ -143,12 +182,12 @@ function fileExists(filename) {
 }
 
 // calls functions to store files to disk
-function uploadFiles(file, tags) {
+async function uploadFiles(file, tags) {
     if (fileExists(file.filename)) {
         file.file.resume();
         return '';
     }
-    saveFile(file, tags, err => {
+    await saveFile(file, tags, err => {
         if (err) {
             error['file_error'] = err;
             return false;
@@ -185,6 +224,7 @@ function addTags(tags) {
     for (let i = 0; i < tags.length; i++) {
         if(!tagExists(tags[i])) {
             db.tags.push(newTagObj(tags[i]));
+            tag_added = true;
         }
     }
 }
@@ -204,7 +244,7 @@ function errorReporter() {
     console.log(error);
     let errors_list = [];
     for (let e in error) {
-        if (error[e]) {
+        if (error[e] && e != 'refresh') {
             errors_list.push(error[e]);
         }
     }
@@ -232,12 +272,14 @@ function finalOp(error, response) {
 
 // main function to process form parsing and uploading files
 async function upload(request, response) {
+    let busboy = new Busboy({headers: request.headers}); // busboy instance for body parsing
+    let tags = [];                                      // stores tags from form
+    tag_added = false;
     duplicates = [];                                     // empties the duplicate array on each uplaod request
     flag = false;
-    let busboy = new Busboy({headers: request.headers}); // busboy instance for body parsing
     db = await DB.getDB();                                     // database current state
-    console.log(db);
-    let tags = [];                                       // stores tags from form
+    error.refresh();
+    emptyUploads();
     // parsing fields in the incoming form
     busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encdoing, mimetype) => {
         // validation for incoming field
@@ -247,7 +289,6 @@ async function upload(request, response) {
                     val.split(',').forEach(tag => {
                         tags.push(tag.trim());
                     });
-                    addTags(tags);
                 }
             }
             else {
@@ -284,11 +325,47 @@ async function upload(request, response) {
         }
     });
     // parsing ends
-    busboy.on('finish', function() {
-        finalOp(error, response);
+    busboy.on('finish', async function() {
+        await compress(response);
         console.log('Done parsing form!');
     });
     request.pipe(busboy);
 }
 
-module.exports = { upload } // upload function accessible using form.upload
+function validCompressType(file) {
+    let ext = file.slice(file.lastIndexOf('.'), );
+    for (let i = 0; i < compress_types.length; i++) {
+        if (ext === compress_types[i]) return true;
+    }
+    return false;
+}
+
+function compress(response) {
+    console.log('compressing now...');
+    const tinify = require('tinify');
+    tinify.key = 'yGnKjQ2B62VWs5kSy4rBZ32lRdXcdDHX';
+    const path = './uploads';
+    new Promise((resolve, reject) => {
+        resolve(fs.readdirSync(path));
+    })
+    .then(files => {
+        files.forEach(async (file) => {
+            if (validCompressType(file)){
+                console.log('Compressing: ', file);
+                const source = tinify.fromFile(path + '/' + file);
+                await source.toFile(`./compressed/${file}`)
+                .then((result) => {
+                    console.log(file, ' compressed');
+                })
+                .catch(error => {
+                    console.log('Cannot compress: ', file);
+                });
+            }
+        });
+        console.log('Finished compression process.');
+        finalOp(error, response);
+    });
+    
+}
+    function done() {}
+    module.exports = { upload } // upload function accessible using form.upload

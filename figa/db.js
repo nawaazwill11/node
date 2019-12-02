@@ -21,6 +21,9 @@ function getDB() {
 }
 
 function updateDB(db) {
+    if (typeof(db) !== 'object') {
+        return ;
+    }
     return new Promise((resolve, reject) => {
         fs.writeFile(db_file, JSON.stringify(db, null, 4), error => {
             if (error) reject(error);
