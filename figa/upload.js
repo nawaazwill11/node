@@ -3,7 +3,7 @@ const fs = require('fs');
      // access file system
 const DB = require('./db');
 const path = require('path');
-const tinify = require('./tinify');
+// const tinify = require('./tinify');
 let files_list = [];               // stores uploaded files names
 let duplicates = [];              // stores duplicate file during form parsing
 let db;                          // globally accessible json database
@@ -25,11 +25,7 @@ let file_types = [
     'image/svg+xml',
     'image/gif'
 ];
-let compress_types = [
-    '.png',
-    '.jpg',
-    '.jpeg'
-]
+
 let flag = false;   // indicated error occurrence
 
 function emptyUploads() {
@@ -303,6 +299,7 @@ async function upload(request, response) {
     });
     // parsing files 
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        console.log('Entered files');
         try {    
             if (!flag) {
                 if (validFileType(mimetype)) {
@@ -327,11 +324,16 @@ async function upload(request, response) {
     });
     // parsing ends
     busboy.on('finish', async function() {
-        await tinify.compress(error, response);
+        // await tinify.compress(error, response)
+        // .then(() => {
+        //     console.log('compression process complete')
+        //     finalOp(error, response);
+        // });
+        finalOp(error, response);
         console.log('Done parsing form!');
     });
     request.pipe(busboy);
 }
-
-    function done() {}
-    module.exports = { upload } // upload function accessible using form.upload
+ 
+function done() {}
+module.exports = { upload } // upload function accessible using form.upload

@@ -1,8 +1,13 @@
-let fsp = require("fs").promises;
-
-try {
-    await fsp.writeFile("/tmp/test5.js", "console.log('Hello world with Node.js v10 fs/promises!'");
-    console.info("File created successfully with Node.js v10 fs/promises!");
-} catch (error){
-    console.error(error);
+function prom() {
+    return new Promise((resolve, reject) => {
+        return(2 + 2);
+    });
 }
+
+async function callprom() {
+    let val = await prom().then(val => { console.log(val); });
+    console.log('finised');
+}
+console.log('here');
+callprom();
+

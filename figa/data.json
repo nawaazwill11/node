@@ -1,38 +1,4 @@
 {
-    "files": [
-        {
-            "id": 1,
-            "filename": "Screenshot from 2019-10-26 11-49-28.png",
-            "originalname": "Screenshot from 2019-10-26 11-49-28.png",
-            "tags": [
-                "com"
-            ]
-        },
-        {
-            "id": 2,
-            "filename": "Screenshot from 2019-11-07 22-25-52.png",
-            "originalname": "Screenshot from 2019-11-07 22-25-52.png",
-            "tags": [
-                "com"
-            ]
-        },
-        {
-            "id": 3,
-            "filename": "Screenshot from 2019-11-07 22-26-54.png",
-            "originalname": "Screenshot from 2019-11-07 22-26-54.png",
-            "tags": [
-                "com"
-            ]
-        }
-    ],
-    "tags": [
-        {
-            "id": 1,
-            "tagname": "com",
-            "assocfiles": [
-                "Screenshot from 2019-11-07 22-25-52.png",
-                "Screenshot from 2019-11-07 22-26-54.png"
-            ]
-        }
-    ]
+    "files": [],
+    "tags": []
 }
