@@ -1,57 +1,25 @@
-const Busboy = require('busboy'); // busboy class
-const fs = require('fs');    
-     // access file system
+// globals
+const async = require('async');
+// const Busboy = require('busboy');
 const DB = require('./db');
+const formidable = require('formidable');
+const fs = require('fs');
+const mv = require('mv');
 const path = require('path');
 // const tinify = require('./tinify');
-let files_list = [];               // stores uploaded files names
-let duplicates = [];              // stores duplicate file during form parsing
-let db;                          // globally accessible json database
-let tag_added;
-// stores file and field error during form parsing
-let error = {
-    'file_error': null,
-    'field_error': null,
-    refresh() {
-        this['file_error'] = null;
-        this['field_error'] = null;
-    }
-}
-
-// supported file types
-let file_types = [
-    'image/jpeg',
-    'image/png',
-    'image/svg+xml',
-    'image/gif'
-];
-
-let flag = false;   // indicated error occurrence
 
 function emptyUploads() {
     let upload_dir = './uploads';
-    fs.readdir('./uploads', (error, files) => {
-        if (error) throw error;
-        for (let file of files) {
-            fs.unlink(path.join(upload_dir, file), (error) => {
-                if (error) throw error;
-            });
-        }
+    for (file of fs.readdirSync('./uploads')) {
+        fs.unlink(path.join(upload_dir, file), (error) => {
+            if (error) throw error;
+        });
         console.log('uploads empty');
-    })
-}
-
-function validFileType(filetype) {
-    for (let i = 0; i < file_types.length; i++) {
-        if (file_types[i] === filetype) {
-            return true;
-        }
     }
-    return null;
 }
+emptyUploads();
 
-// checks if the tag field parsed in the form if valid
-function tagError(tags) {
+function validateTags(tags) {
     let error = null;
     if (tags.length === 0) {
         error = 'Error: Please add one or more tags.';
@@ -76,264 +44,158 @@ function tagError(tags) {
     return error;
 }
 
-// return the id of the latest entry from the database
-function getLastId() {
-    return db.lastId;
-}
-
-// returns a new file object
-function newFileObj(filename, tags) {
-    // if (obj) {
-    //     let newTags = []
-    //     for (let i = 0; i < db.files[i].tags.length; i++) {
-    //         for (let j = 0; j < tags; j++) {
-    //             if (tags[j] !== db.files[i].tags[i]) {
-    //                 newTags.push(tags[j]);
-    //             }
-    //         }
-    //     }
-    // }
-
-    let id = 1
-    if (!db.files.length == 0) {
-        id = db.files[db.files.length - 1].id + 1;
-    }
-    return {
-        "id": id,
-        "filename": filename,
-        "originalname": filename,
-        "tags": tags
-    }
-}
-
-
-// update tags list
-function updateTags(tags, filename) {
-    for (let i = 0; i < tags.length; i++) {
-        for (let j = 0; j < db.tags.length; j++) {
-            if (tags[i] == db.tags[j].tagname) {
-                db.tags[j].assocfiles.push(filename);
-                console.log(`${filename} added to tags`);
-                break;
-            }
-        }
-    }
-}
-
-// updates the database with new file object
-function updateFileToDB(filename, tags, callback) {
-    console.log('adding new file object');
-    db.files.push(newFileObj(filename, tags));
-    updateTags(tags, filename);
-    DB.updateDB(db)
-        .then(db => {
-            console.log('Promise complete.');
-        })
-        .catch(err => {
-            callback(err);
-        });
-    callback(null);
-}
-
-// saves files to disk
-function saveFile(file, tags, callback) {
-    new Promise((resolve, reject) => {
-        try {
-            file['file'].pipe(fs.createWriteStream(`${process.cwd()}/uploads/${file.filename}`))
-            resolve(file);
-        }
-        catch (err) {
-            console.log(err);
-            reject(err);
-        }
-    })
-    .then(file => {
-        updateFileToDB(file.filename, tags, err => {
-            if (err) {
-                callback(err);
-                return false;
-            }
-            if (!tag_added) {
-                addTags(tags);
-            } 
-            console.log(file.filename, ' added to db');
-        });
-        callback(null);
-
-    })
-    .catch(err => {
-        callback(err);
-    })
-    
-}
-
-function fileExists(filename) {
-    for (let i = 0; i < db.files.length; i++) {
-        if (db.files[i].filename === filename) {
-            duplicates.push(filename);
-            console.log('duplicate found ', filename);
+function validFile(filetype) {
+    let file_types = [
+        'image/jpeg',
+        'image/png',
+        'image/svg+xml',
+        'image/gif'
+    ];
+    for (let i = 0; i < file_types.length; i++) {
+        if (file_types[i] === filetype) {
             return true;
         }
     }
-    return false;
+    return null;
 }
 
-// calls functions to store files to disk
-async function uploadFiles(file, tags) {
-    if (fileExists(file.filename)) {
-        file.file.resume();
-        return '';
-    }
-    await saveFile(file, tags, err => {
-        if (err) {
-            error['file_error'] = err;
-            return false;
-        }
-        console.log(file.filename, ' saved to uploads directory.');
+function upload(request, response) {
+    // const busboy = new Busboy({headers: request.headers});
+    let form = new formidable.IncomingForm();
+    let tags;
+    let files = [];
+    emptyUploads();
+    form.multiples = true;
+    form.parse(request);
+    
+    form.on('field', function (name, field) {
+        tags = field;
     });
+
+    form.on('file', function (name, file) {
+        files.push(file);
+    });
+
+    form.on('end', function() {
+       uploadProcessor(tags, files, response);
+    });
+
+    // request.pipe(busboy);
 }
 
-// adds new tags to db
-function tagExists(tag) {
-    for (let j = 0; j < db.tags.length; j++) {
-        if (tag === db.tags[j].tagname) {
-            return true
-        }
-    }
-    return false;
-}
-
-// creates new tag object
-function newTagObj(tag) {
-    let id = 1;
-    if (!db.tags.length == 0) {
-        id = db.tags[db.tags.length - 1].id + 1;
-    }
-    return {
-        id: id,
-        tagname: tag,
-        assocfiles: []
-    }
-}
-
-// adds new tags to db
-function addTags(tags) {
-    for (let i = 0; i < tags.length; i++) {
-        if(!tagExists(tags[i])) {
-            db.tags.push(newTagObj(tags[i]));
-            tag_added = true;
-        }
-    }
-}
-
-// adds new error to error object
-function addError(message, type) {
-    if (message){
-        error[type] = message;
-        flag = true;
-        return true;
-    }
-    return false;
-}
-
-// generate error response
-function errorReporter() {
-    console.log(error);
-    let errors_list = [];
-    for (let e in error) {
-        if (error[e] && e != 'refresh') {
-            errors_list.push(error[e]);
-        }
-    }
-    return errors_list;
-}
-
-// checks duplicates and notifies
-function finalOp(error, response) {
-    let errors_list = errorReporter();
-    if (errors_list.length > 0) {
-        response.writeHead(500, {'Content-type': 'text/plain'});
-        response.end(errors_list.toString());
-    }
-    else if (duplicates.length > 0) {
-        response.writeHead(207, {'Content-Type': 'text/plain'});
-        response.end(JSON.stringify({
-            "duplicates": duplicates
-        }));
+function uploadProcessor(tags, files, response) {
+    let tag_error = validateTags(tags);
+    if (tag_error) {
+        response.writeHead(500, {'Content-Type': 'text/plain'});
+        response.end(JSON.stringify({ error: error }));
     }
     else {
-        response.writeHead(200, {'Content-type': 'text/html' });
-        response.end('Uploaded.');
+        let file_error = [];
+        async.series([
+            function validityCheck(callback) {
+                let valid_files = []
+                for(file of files) {
+                    if (validFile(file.type)) {
+                        valid_files.push(file);
+                    }
+                    else {
+                        file_error.push({
+                            file: file.name,
+                            error: 0
+                        })
+                    }
+                }
+                files = valid_files;
+                callback(null);
+            },
+            function duplicationCheck(callback) {
+                // future implementation
+                callback(null);
+            },
+            function writeToDisk(callback) {
+                async.each(files, function(file, callback){
+                    try {
+                        // let file = file.file;
+                        let oldpath = file.path;
+                        let newpath = __dirname + '/uploads/' + file.name;
+                        mv(oldpath, newpath, function (error) {
+                            if (error) {
+                                file_error.push({
+                                    file: file.name,
+                                    error: 1
+                                })
+                            }
+                            callback(); // each         
+                        });
+                    }
+                    catch (e) {
+                        callback(e); //each
+                    }
+                },function onError(error) {
+                    if (error) {
+                        console.log(error);
+                        callback(error); // series
+                    }
+                    else {
+                        callback(null); // series
+                    }
+                });
+            },
+            function compressFiles(callback) {
+                // async.waterfall([
+                //     function filterUnderSizedFiles(callback) {
+                //         let filtered_files = [];
+                //         for (file of files) {
+                //             let file_size = fs.statSync(`./uploads/${file.name}`).size;
+                //             console.log(file_size);
+                //             if (file_size / 1024 >= 200) {
+                //                 filtered_files.push(file);
+                //             }
+                //         }
+                //         callback(null, filtered_files); // waterfall - self
+                //     }, function sendForCompression(files, callback) {
+                //         for (file of files) {
+                //             let compress = tinify.compress(file.name);
+                //             if (!compress) {
+                //                 file_error.push({
+                //                     name: file.name,
+                //                     message: compress
+                //                 });
+                //             }
+                //         }
+                //         callback(null); // waterfall -self
+                //     }
+                // ], function onError(error) {
+                //     if (error) {
+                //         console.log(error);
+                //         callback(error); // series (parent)
+                //     }
+                //     else {
+                //         console.log('All files compress.')
+                //         callback(null) // series (parent)
+                //     }
+                // });
+                callback(null);
+            },
+            function cleanUp(callback) {
+                // cleanup code
+                callback();
+            }
+        ], function onError(error) {
+            if (error) {
+                response.writeHead(500, {'Content-Type': 'text/plain'});
+                response.end(error.toString());
+            }
+            else if (file_error.length > 0) {
+                response.writeHead(500, {'Content-Type': 'text/plain'});
+                response.end(JSON.stringify(file_error));
+            }
+            else {
+                response.writeHead(200, {'Content-Type': 'text/plain'});
+                response.end('Uploaded.');
+            }
+        });
     }
 }
 
-// main function to process form parsing and uploading files
-async function upload(request, response) {
-    let busboy = new Busboy({headers: request.headers}); // busboy instance for body parsing
-    let tags = [];                                      // stores tags from form
-    tag_added = false;
-    duplicates = [];                                     // empties the duplicate array on each uplaod request
-    flag = false;
-    db = await DB.getDB();                                     // database current state
-    error.refresh();
-    emptyUploads();
-    // parsing fields in the incoming form
-    busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encdoing, mimetype) => {
-        // validation for incoming field
-        if (!flag) {
-            if (fieldname == 'tags') { 
-                if (!addError(tagError(val), 'field_error')) {
-                    val.split(',').forEach(tag => {
-                        tags.push(tag.trim());
-                    });
-                }
-            }
-            else {
-                addError('Internal error: Invalid tag input. Please retry.', 'field_error');
-            }    
-        }
-        else {
-            addError('Internal error: Unresolved errors. Please refresh the page and retry.', 'field_error');
-        }    
-        
-    });
-    // parsing files 
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        console.log('Entered files');
-        try {    
-            if (!flag) {
-                if (validFileType(mimetype)) {
-                    uploadFiles({
-                        filename: filename,
-                        file: file,
-                    }, tags);
-                }
-                else {
-                    addError('Internal error: Unsupported file type. Please retry.', 'file_error');
-                    file.resume();
-                }
-            }
-            else {
-                addError('Internal error: Unresolved errors. Please refresh the page and retry.', 'field_error');
-                file.resume();
-            }
-        }
-        catch (e) {
-            console.log("Error handled: ", e);
-        }
-    });
-    // parsing ends
-    busboy.on('finish', async function() {
-        // await tinify.compress(error, response)
-        // .then(() => {
-        //     console.log('compression process complete')
-        //     finalOp(error, response);
-        // });
-        finalOp(error, response);
-        console.log('Done parsing form!');
-    });
-    request.pipe(busboy);
-}
- 
-function done() {}
-module.exports = { upload } // upload function accessible using form.upload
+module.exports = { upload }

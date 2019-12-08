@@ -1,13 +1,20 @@
-function prom() {
-    return new Promise((resolve, reject) => {
-        return(2 + 2);
-    });
-}
+const async = require('async');
 
-async function callprom() {
-    let val = await prom().then(val => { console.log(val); });
-    console.log('finised');
-}
-console.log('here');
-callprom();
+async.series([
+    function(callback) {
+        setTimeout(() => {
 
+            console.log('Me first');
+            callback(null, 'Me first');
+
+        }, 2000)
+    },
+    function (callback) {
+        console.log('Me 2');
+        callback(null, 'Me 2');
+    }
+   ], function (error, result) {
+       if (error) throw error;
+       console.log(result);
+   }
+);

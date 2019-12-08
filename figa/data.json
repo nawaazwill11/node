@@ -1,4 +1,21 @@
 {
-    "files": [],
-    "tags": []
+    "files": [
+        {
+            "id": 1,
+            "filename": "Screenshot from 2019-10-26 11-49-28.png",
+            "originalname": "Screenshot from 2019-10-26 11-49-28.png",
+            "tags": [
+                "com"
+            ]
+        }
+    ],
+    "tags": [
+        {
+            "id": 1,
+            "tagname": "com",
+            "assocfiles": [
+                "Screenshot from 2019-10-26 11-49-28.png"
+            ]
+        }
+    ]
 }
