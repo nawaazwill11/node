@@ -1,34 +1,29 @@
-const fs = require('fs');
-let db_file = './data.json';
-
-function getDB() {
-    return new Promise((resolve, reject) => {
-        fs.readFile(db_file, 'utf8', (error, data) => {
-            if (error) {
-                console.log("error has occurred while fetching database.");
-                reject(error);
-            }
-            resolve(data)
-        });
+const Pool = require('pg').Pool;
+const pool = new Pool({
+    user: 'admin',
+    host: '127.0.0.1',
+    database: 'figa',
+    password: '00009658',
+    port: 5432,
+  })
+let file_obj = {
+    name: 'arrow.svg',
+    type: 'image/svg+xml',
+    size: '4040',
+    tags: ['svg', 'figa']
+}
+pool
+    
+    // client.query('INSERT INTO files (meta) VALUES ($1)', [file_obj], (error, result) => {
+    //     if (error) throw error;
+    //     console.log(result);
+    // });
+    .query('SELECT files.meta FROM files')
+    .then (result => {
+        console.log(result.rows);
     })
-    .then(data => {
-        return JSON.parse(data);
-    })
-    .catch(error => {
-        console.log('error in catch');
-        console.log(error);
+    .catch (error => {
+        console.error(error);
     });
-}
 
-function updateDB(db) {
-    if (typeof(db) !== 'object') {
-        return ;
-    }
-    return new Promise((resolve, reject) => {
-        fs.writeFile(db_file, JSON.stringify(db, null, 4), error => {
-            if (error) reject(error);
-            resolve(db);
-        });
-    })
-}
-module.exports = { getDB, updateDB }
+pool.end();

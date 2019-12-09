@@ -1,6 +1,6 @@
 const Busboy = require('busboy');
 const fs = require('fs');
-let DB = require('./db');
+// let DB = require('./db');
 let db;
 
 function makeTagsList() {

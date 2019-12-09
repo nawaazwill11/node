@@ -1,7 +1,7 @@
 // globals
 const async = require('async');
 // const Busboy = require('busboy');
-const DB = require('./db');
+// const DB = require('./db');
 const formidable = require('formidable');
 const fs = require('fs');
 const mv = require('mv');
@@ -125,6 +125,7 @@ function uploadProcessor(tags, files, response) {
                                     error: 1
                                 })
                             }
+                            // updateDB(tags, file.name);
                             callback(); // each         
                         });
                     }

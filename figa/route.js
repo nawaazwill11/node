@@ -5,11 +5,14 @@ const fh = require('finalhandler');
 const upload = require('./upload');
 const view = require('./view');
 const fetch = require('./fetch');
+const test = require('./test');
 const template = {
     '/': 'index.html',
     'view': 'view_files.html',
-    'upload': 'upload.html'
+    'upload': 'upload.html',
+    'test': 'test.html'
 }
+
 // root
 router.get('/', (request, response) => {
     response.writeHead(200, {'Content-Type': 'text/html'});
@@ -123,6 +126,14 @@ router.post('/suggestion', function (request, response) {
 router.post('/search', function (request, response) {
     fetch.tagSearch(request, response);
 });
+router.get('/test', function (request, response) {
+    response.writeHead(200, {'Content-Type': 'text/html'});
+    fs.createReadStream(template['test']).pipe(response);
+});
+router.post('/test', function (request, response) {
+    test(request, response, template['test']);
+});
+
 module.exports = function (request, response) {
     console.log(request.url);
     router(request, response, fh(request, response));

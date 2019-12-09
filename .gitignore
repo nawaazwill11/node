@@ -2,3 +2,5 @@ figa/.env
 misc/drive_api/
 figa/tinify.js
 misc/tinify_app
+figa/credentials.json
+figa/token.json
