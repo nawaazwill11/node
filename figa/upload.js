@@ -129,27 +129,40 @@ function uploadProcessor(tags, files, response) {
             },
             function uploadToDrive(files, callback) {
                 let uploaded_files = [];
-                async.each(files, function (file, callback) {
-                    let cb = function (error, record) {
-                        if (error) {
-                            callback(error);
-                        }
+                drive.initiateAuthorization(function (error, oAuthClient) {
+                    if (error) return callback(error);
+                    console.log('access token acquired');
+                    async.each(files, function (file, callback) {
+                        console.log('Pushing file to drive with name ', file.name);
+                        file['stream'] = bufferToStream(file.buffer);
+                        drive.uploadFiles(oAuthClient, file, function (error, record) {
+                            if (error) {
+                                callback(error);
+                            }
+                            else {
+                                console.log(record);
+                                file['id'] = record.id;
+                                uploaded_files.push(file);
+                                callback();
+                            }
+                        });
+                    }, function (error) {
+                        // create records of each uploaded file
+                        if (error) return callback(error + ' an error occured');
                         else {
-                            console.log(record);
-                            // uploaded_files.push(record);
-                            callback();
+                            console.log(uploaded_files);
+                            callback(null, uploaded_files);
                         }
-                    }
-                    file['stream'] = bufferToStream(file.buffer);
-                    drive('upload', file, cb);
-                }, function (err) {
-                    // create records of each uploaded file
+                    });
                 });
             },
-            function cleanUp(callback) {
-                // cleanup code
-                callback();
-            }
+            // function addFileRecord(files, callback) {
+
+            // },
+            // function cleanUp(callback) {
+            //     // cleanup code
+            //     callback();
+            // }
         ], function onError(error) {
             if (error) {
                 response.writeHead(500, {'Content-Type': 'text/plain'});
