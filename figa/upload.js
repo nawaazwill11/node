@@ -2,10 +2,12 @@
 const async = require('async');
 // const Busboy = require('busboy');
 // const DB = require('./db');
+const drive = require('./drive_api');
 const formidable = require('formidable');
 const fs = require('fs');
 const mv = require('mv');
 const path = require('path');
+const { Readable } = require('stream');
 // const tinify = require('./tinify');
 
 function emptyUploads() {
@@ -59,6 +61,16 @@ function validFile(filetype) {
     return null;
 }
 
+function bufferToStream(buffer) {
+    const readableInstanceStream = new Readable({
+      read() {
+        this.push(buffer);
+        this.push(null);
+      }
+    });
+    return readableInstanceStream;
+}
+
 function upload(request, response) {
     // const busboy = new Busboy({headers: request.headers});
     let form = new formidable.IncomingForm();
@@ -73,7 +85,15 @@ function upload(request, response) {
     });
 
     form.on('file', function (name, file) {
-        files.push(file);
+        let file_obj = {
+            buffer: fs.readFileSync(file.path),
+            name: file.name,
+            size: file.size,
+            type: file.type
+        }
+        files.push(file_obj);
+        // let write_stream = fs.createWriteStream('./uploads/' + file.name);
+        // write_stream.write(file_obj.file_buffer);
     });
 
     form.on('end', function() {
@@ -91,7 +111,7 @@ function uploadProcessor(tags, files, response) {
     }
     else {
         let file_error = [];
-        async.series([
+        async.waterfall([
             function validityCheck(callback) {
                 let valid_files = []
                 for(file of files) {
@@ -105,78 +125,26 @@ function uploadProcessor(tags, files, response) {
                         })
                     }
                 }
-                files = valid_files;
-                callback(null);
+                callback(null, valid_files);
             },
-            function duplicationCheck(callback) {
-                // future implementation
-                callback(null);
-            },
-            function writeToDisk(callback) {
-                async.each(files, function(file, callback){
-                    try {
-                        // let file = file.file;
-                        let oldpath = file.path;
-                        let newpath = __dirname + '/uploads/' + file.name;
-                        mv(oldpath, newpath, function (error) {
-                            if (error) {
-                                file_error.push({
-                                    file: file.name,
-                                    error: 1
-                                })
-                            }
-                            // updateDB(tags, file.name);
-                            callback(); // each         
-                        });
+            function uploadToDrive(files, callback) {
+                let uploaded_files = [];
+                async.each(files, function (file, callback) {
+                    let cb = function (error, record) {
+                        if (error) {
+                            callback(error);
+                        }
+                        else {
+                            console.log(record);
+                            // uploaded_files.push(record);
+                            callback();
+                        }
                     }
-                    catch (e) {
-                        callback(e); //each
-                    }
-                },function onError(error) {
-                    if (error) {
-                        console.log(error);
-                        callback(error); // series
-                    }
-                    else {
-                        callback(null); // series
-                    }
+                    file['stream'] = bufferToStream(file.buffer);
+                    drive('upload', file, cb);
+                }, function (err) {
+                    // create records of each uploaded file
                 });
-            },
-            function compressFiles(callback) {
-                // async.waterfall([
-                //     function filterUnderSizedFiles(callback) {
-                //         let filtered_files = [];
-                //         for (file of files) {
-                //             let file_size = fs.statSync(`./uploads/${file.name}`).size;
-                //             console.log(file_size);
-                //             if (file_size / 1024 >= 200) {
-                //                 filtered_files.push(file);
-                //             }
-                //         }
-                //         callback(null, filtered_files); // waterfall - self
-                //     }, function sendForCompression(files, callback) {
-                //         for (file of files) {
-                //             let compress = tinify.compress(file.name);
-                //             if (!compress) {
-                //                 file_error.push({
-                //                     name: file.name,
-                //                     message: compress
-                //                 });
-                //             }
-                //         }
-                //         callback(null); // waterfall -self
-                //     }
-                // ], function onError(error) {
-                //     if (error) {
-                //         console.log(error);
-                //         callback(error); // series (parent)
-                //     }
-                //     else {
-                //         console.log('All files compress.')
-                //         callback(null) // series (parent)
-                //     }
-                // });
-                callback(null);
             },
             function cleanUp(callback) {
                 // cleanup code

@@ -1,0 +1,28 @@
+To resize image, or to create thumbnail, jimp package on npm is useful.
+
+INSTALLATION
+    npm install jimp --save
+
+PACKAGE INFO AT
+    https://www.npmjs.com/package/jimp
+
+USE
+1. Use the read method of jimp to supply the path of the image and a callback that return an error on error or a jimp image file.
+    jimp.read(path_to_file, function (error, image) {
+        // implementation code
+    });
+2. Jimp comes with a bunch of methods. To resize, we use the resize method on the image obtained from the callback.
+    jimp.read(path_to_file, function (error, image) {
+        if (error) return console.error(error);
+        image
+        .resize(100, 100); // syntax: resize(width, height)
+    });
+3. Followed by the write method, we can write the file to disk.
+    image
+    .resize(100, 100)
+    .write(path_to_save_file);
+4. We can also get the buffer of the resized file by using the getBuffer method.
+    image
+    .resize(100, 100)
+    .getBuffer(mime, callback); // mimetype for png: 'image/png' or use the jimp.MIME_PNG.
+    // more at https://www.npmjs.com/package/jimp#writing-to-buffers

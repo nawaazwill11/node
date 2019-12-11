@@ -5,25 +5,49 @@ const pool = new Pool({
     database: 'figa',
     password: '00009658',
     port: 5432,
-  })
-let file_obj = {
-    name: 'arrow.svg',
-    type: 'image/svg+xml',
-    size: '4040',
-    tags: ['svg', 'figa']
-}
-pool
-    
-    // client.query('INSERT INTO files (meta) VALUES ($1)', [file_obj], (error, result) => {
-    //     if (error) throw error;
-    //     console.log(result);
-    // });
-    .query('SELECT files.meta FROM files')
-    .then (result => {
-        console.log(result.rows);
+  });
+
+function getDriveCredentials(callback) {
+    pool
+    .query('SELECT credentials FROM drive_credentials where id=1;')
+    .then(result => {
+        console.log(result.rows[0].credentials);
+        callback(null, result.rows[0].credentials);
     })
     .catch (error => {
-        console.error(error);
+        callback(error);
     });
+}
 
-pool.end();
+function getAuthToken(callback) {
+    console.log('getting auth token');
+    pool
+    .query('SELECT credentials FROM drive_credentials where id=2;')
+    .then(result => {
+        if (result.rows.length > 1){
+            console.log('found access token');
+            callback(null, result.rows[1]);
+        }
+        else {
+            console.log('no access token found');
+            callback(null, false);
+        }
+    })
+    .catch (error => {
+        callback(error);
+    });
+}
+
+function setAuthToken(token, callback) {
+    pool
+    .query('INSERT INTO drive_credentials(credentials) VALUES ($1)', [JSON.stringify(token)])
+    .then(() => {
+        console.log('access token set');
+        callback();
+    })
+    .catch(error => {
+        console.log(error);
+    });
+}
+
+module.exports = { getDriveCredentials, getAuthToken, setAuthToken };
