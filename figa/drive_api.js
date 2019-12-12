@@ -1,22 +1,16 @@
 const fs = require('fs');
-const Busboy = require('busboy');
 const readline = require('readline');
 const { google } = require('googleapis');
 const db = require('./db');
 const pool = db.getPool();
 
+// scopes that define the type of access and permissions to drive
 const SCOPES = [
     'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/drive.metadata.readonly'
 ];
 
-const callback = {
-    upload: uploadFiles,
-    download: downloadFiles,
-    list: listFiles,
-    search: searchFiles 
-};
-
+// begins the authorization process
 function initiateAuthorization(callback) {
     console.log('init authentication');
     let initAuth = function (error, credentials) {
@@ -26,6 +20,7 @@ function initiateAuthorization(callback) {
     db.getDriveCredentials(pool, initAuth);
 }
 
+// creates an authentication object using authentication token
 function authorize(credentials, callback) {
     console.log('authorizing');
     const { client_secret, client_id, redirect_uris } = credentials.installed;
@@ -36,16 +31,17 @@ function authorize(credentials, callback) {
         if (error) return callback(error);
         if (!token) {
             console.log('creating new token');
-            getAccessToken(oAuth2Client, callback)
+            getAccessToken(oAuth2Client, callback); // if no token is found, create a new token
         }
         else {
-            oAuth2Client.setCredentials(token);
-            callback(null, oAuth2Client);
+            oAuth2Client.setCredentials(token); // set token to auth object
+            callback(null, oAuth2Client); 
         }
     }
     db.getAuthToken(pool, cb);
 }
 
+// creates a new access token got oAuth object
 function getAccessToken(oAuth2Client, callback) {
     console.log('getting access token');
     const authUrl = oAuth2Client.generateAuthUrl({
@@ -68,22 +64,16 @@ function getAccessToken(oAuth2Client, callback) {
                 callback(null, oAuth2Client);
             }
             db.setAuthToken(pool, token, cb);
-
-            // fs.writeFile(TOKEN_PATH, JSON.stringify(token), (error) => {
-            //     if (error) return console.error(error);
-            //     console.log('Token stored to ', TOKEN_PATH);
-            // });
-            
         });
     });
 }
 
-
-
+// searches files from drive
 function searchFiles(auth) {
     // code to be
 }
 
+// download files from drive
 function downloadFiles(auth) {
     const drive = google.drive({version: 'v3', auth});
     let fileId = '1KP4aE4u8EXx3XHcWHgiPWRt8YA4OE8H1';
@@ -108,12 +98,12 @@ function downloadFiles(auth) {
     );
 }
 
+// uploads files to drive and returns file id
 function uploadFiles(auth, parent, file, callback) {
-    console.log('uploading files');
     const drive = google.drive({version: 'v3', auth});
     let fileMetaData = {
         'name': file.name,
-        parents: [parent]
+        parents: [parent] 
     };
     let media = {
         mimetype: file.type,
@@ -130,6 +120,7 @@ function uploadFiles(auth, parent, file, callback) {
     });        
 }
 
+// lists files from drive 
 function listFiles(auth) {
     const drive = google.drive({version: 'v3', auth});
     drive.files.list({
@@ -149,11 +140,11 @@ function listFiles(auth) {
     });
 }
 
+// gets the app folder id from drive
 function getFolder(auth, foldername, callback) {
-    console.log('Getting folder');
+    console.log('Getting folder id');
     db.getFolderId(pool, function (error, folder_id) {
         if (error) return callback(error);
-        console.log('Folder found in database');
         const drive = google.drive({ version: 'v3', auth });
         drive.files.list({
             q: `mimeType = 'application/vnd.google-apps.folder' and name='${foldername}' and trashed=false`,
@@ -168,19 +159,27 @@ function getFolder(auth, foldername, callback) {
                 if (folder.length > 0) {
                     drive_folder_id = folder[folder.length - 1].id
                     console.log('Folder found on drive');
+                    // If the folder id in the database matches the one on drive, return the id.
                     if (drive_folder_id === folder_id) {
-                        console.log('Folders match, uploading in same folder');
-                        callback(null, folder_id);
+                        console.log('Folder ids match, uploading in same folder');
+                        callback(null, folder_id); 
                     }
+                    // If it doesn't, that means that either the folder is moved, renamed or deleted.
+                    // This means the files are no more accessible to the app. 
+                    // As a fallback protocol, delete all records, and start uploading from scratch.
                     else {
-                        console.log('Folders dont match');
+                        console.log('Folder id from drive and db dont match');
+                        console.log('Folder is either deleted or is moved');
+                        console.log('Initiating fallback protocol...');
                         db.emptyTagsFiles(null, function (error) {
+                            if (error) return callback(error);
                             makeFolder(auth, foldername, callback, drive);
                         });
                     }
                 }
+                // when there is not folder id present in the database, create a new folder on drive and insert it to the database
                 else {
-                    console.log('No folder found in db');
+                    console.log('No folder id found in db');
                     makeFolder(auth, foldername, callback, drive);
                 }
             }
@@ -188,8 +187,9 @@ function getFolder(auth, foldername, callback) {
     });
 }
 
+// creates a new folder on drive, set its id in the database, and return the new folder's id
 function makeFolder(auth, foldername, callback, drv) {
-    console.log('Making folder');
+    console.log('Making new folder on drive');
     const drive = drv || google.drive({ version: 'v3', auth });
     let fileMetaData = {
         'name': foldername,

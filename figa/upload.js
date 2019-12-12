@@ -1,6 +1,5 @@
 // globals
 const async = require('async');
-// const Busboy = require('busboy');
 const db = require('./db');
 const drive = require('./drive_api');
 const formidable = require('formidable');
@@ -8,8 +7,9 @@ const fs = require('fs');
 const mv = require('mv');
 const path = require('path');
 const { Readable } = require('stream');
-// const tinify = require('./tinify');
+const thumbnail = require('./thumbnail');
 
+// empties the upload folder on every load.
 function emptyUploads() {
     let upload_dir = './uploads';
     for (file of fs.readdirSync('./uploads')) {
@@ -21,6 +21,7 @@ function emptyUploads() {
 }
 emptyUploads();
 
+// return whether the tags are valid or not
 function validateTags(tags) {
     let error = null;
     if (tags.length === 0) {
@@ -46,6 +47,7 @@ function validateTags(tags) {
     return error;
 }
 
+// uploads only these file types.
 function validFile(filetype) {
     let file_types = [
         'image/jpeg',
@@ -61,6 +63,7 @@ function validFile(filetype) {
     return null;
 }
 
+// converts buffer (binary) to stream data
 function bufferToStream(buffer) {
     const readableInstanceStream = new Readable({
       read() {
@@ -71,20 +74,23 @@ function bufferToStream(buffer) {
     return readableInstanceStream;
 }
 
+// the main function called on /upload request
 function upload(request, response) {
-    // const busboy = new Busboy({headers: request.headers});
-    let form = new formidable.IncomingForm();
-    let tags;
-    let files = [];
+    let form = new formidable.IncomingForm(); // form instance to parse forms
+    let tags; // stores tags of the current upload session
+    let files = []; // stores file objects of uploaded files
     emptyUploads();
-    form.multiples = true;
+    form.multiples = true; // accept multiple files from form
     form.parse(request);
     
+    // grabs the text (tag) field from the form
     form.on('field', function (name, field) {
         tags = field;
     });
 
+    //grabs the files from the form
     form.on('file', function (name, file) {
+        // file object to be used during upload
         let file_obj = {
             buffer: fs.readFileSync(file.path),
             name: file.name,
@@ -92,109 +98,139 @@ function upload(request, response) {
             type: file.type
         }
         files.push(file_obj);
-        // let write_stream = fs.createWriteStream('./uploads/' + file.name);
-        // write_stream.write(file_obj.file_buffer);
+
     });
 
     form.on('end', function() {
+        // initiates the upload process when form parsing ends.
        uploadProcessor(tags, files, response);
     });
-
-    // request.pipe(busboy);
 }
 
+// uploads files to drive, stores tag and file records to database, sends final response
 function uploadProcessor(tags, files, response) {
     let tag_error = validateTags(tags);
     if (tag_error) {
         response.writeHead(500, {'Content-Type': 'text/plain'});
         response.end(JSON.stringify({ error: error }));
     }
+    // only proceed if tags are valid. else respond with error
     else {
-        let file_error = [];
+        let files_with_error = [];
+        // upload process in a sequence
         async.waterfall([
+            //checks file validity by checking its mimetype
             function validityCheck(callback) {
-                let valid_files = []
+                let valid_files = []; // all valid files will be passed on the next function
                 for(file of files) {
                     if (validFile(file.type)) {
                         valid_files.push(file);
                     }
                     else {
-                        file_error.push({
+                        files_with_error.push({
                             file: file.name,
-                            error: 0
-                        })
+                            on: 'validation'
+                        });
                     }
                 }
                 callback(null, valid_files);
             },
+            // uploads all valid files to drive and adds file id to file object
             function uploadToDrive(files, callback) {
-                let uploaded_files = [];
-    
+                let uploaded_files = []; // stores all uploads files
+                // return an oAuthv3 authentication object
                 drive.initiateAuthorization(function (error, oAuthClient) {
                     if (error) return callback(error);
                     console.log('access token acquired');
+                    // gets the folder id
                     drive.getFolder(oAuthClient, 'figa', function (error, folder_id) {
                         if (error) return callback(error);
+                        // iterates through each file in parallel and passes them to the upload function
                         async.each(files, function (file, callback) {
-                            console.log('Pushing file to drive with name ', file.name);
-                            file['stream'] = bufferToStream(file.buffer);
+                            console.log('Uploading file to drive with name ', file.name);
+                            file['stream'] = bufferToStream(file.buffer); // creating files buffer to stream to uploads to drive
+                            // function that actually uploads the file and gets the uploaded file's id
                             drive.uploadFiles(oAuthClient, folder_id, file, function (error, record) {
                                 if (error) {
-                                    callback(error);
+                                    files_with_error.push({
+                                        file: file.name,
+                                        on: 'upload'
+                                    });
+                                    return callback(`Failed to upload ${file.name} to drive\n${error}`);
                                 }
-                                else {
-                                    file['id'] = record.id;
-                                    uploaded_files.push(file);
-                                    console.log('pushed');
-                                    callback();
-    
-                                }
+                                console.log('File ' + file.name + ' successfully uploaded')
+                                file['id'] = record.id; // file id stored in file object 
+                                uploaded_files.push(file); // pushed upload files to a list for storing them in database
+                                callback();
                             });
                         }, function (error) {
-                            // create records of each uploaded file
-                            if (error) return callback(error + ' an error occured');
-                            else {
-                                console.log('All files uploaded to drive.')
-                                console.log('Initiating storing files to db...')
-                                callback(null, uploaded_files);
-                            }
+                            if (error) return callback(error);
+                            console.log('All files uploaded to drive.');
+                            console.log('Inserting file records in db...');
+                            callback(null, uploaded_files);
                         });
                     });
                 });
             },
+            // create records of each uploaded file
             function addFileRecord(files, callback) {
                 tags = tags.split(',');
+                // gets a pool object and uses the same for all file record insertion instead of creating a new one everytime
                 db.getPool(function (pool) {
+                    // iterates through all file objects and stores them to database
+                    let count = 0;
                     async.each(files, function(file, callback){
-                        db.addFileRecord(pool, tags, file, function (error) {
-                            if (error) return callback(error);
-                            console.log('File record inserted into db ', file.name);
-                            callback();
-                        })
+                        console.log('Thumbnailing file ', file.name);
+                        thumbnail.generateThumbnail(file.buffer, file.type, function (error, thumbnail) {
+                            if (error) {
+                                files_with_error.push({
+                                    file: file.name,
+                                    on: 'thumbnail'
+                                });
+                                return callback(error);
+                            }
+                            console.log('Thumbnail fetched');
+                            file['thumbnail'] = thumbnail;
+                            // inserts file meta to database
+                            db.addFileRecord(pool, tags, file, function (error) {
+                                if (error) {
+                                    files_with_error.push({
+                                        file: file.name,
+                                        on: 'record insertion'
+                                    });
+                                    console.log(error);
+                                    return callback(error);
+                                }
+                                console.log('File ' + file.name + ' record inserted into db ');
+                                callback();
+                            });
+                        });
                     }, function (error) {
                         if (error) return callback(error);
-                        callback(null, 'done');
-                    })
-                })
-            },
-            // function cleanUp(callback) {
-            //     // cleanup code
-            //     callback();
-            // }
+                        console.log('All files record successfully inserted in db.');
+                        console.log('Files that failed to upload due to error\n', files_with_error);
+                        callback();
+
+                    });
+                });
+            }
         ], function onError(error) {
+            // unsolvable error return server error
             if (error) {
                 response.writeHead(500, {'Content-Type': 'text/plain'});
                 response.end(error.toString());
             }
-            else if (file_error.length > 0) {
-                response.writeHead(500, {'Content-Type': 'text/plain'});
-                response.end(JSON.stringify(file_error));
+            // partial success error
+            else if (files_with_error.length > 0) {
+                response.writeHead(207, {'Content-Type': 'text/plain'});
+                response.end(JSON.stringify(files_with_error));
             }
+            // all process successfully executed
             else {
                 response.writeHead(200, {'Content-Type': 'text/plain'});
                 response.end('Uploaded.');
             }
-            console.log('Done form parsing.');
+            console.log('Done processing.');
         });
     }
 }
