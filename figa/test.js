@@ -13,14 +13,18 @@ const callback = {
     upload: uploadFiles,
     download: downloadFiles,
     list: listFiles,
-    search: searchFiles 
+    search: searchFiles,
+    folder: makeFolder
 };
 
-fs.readFile('credentials.json', (error, content) => {
-    if (error) return console.log('Error while loading client secret file', error);
-    authorize(JSON.parse(content), callback['search']);
-});
+function run () {
 
+    fs.readFile('credentials.json', (error, content) => {
+        if (error) return console.log('Error while loading client secret file', error);
+        authorize(JSON.parse(content), callback['folder']);
+    });
+    
+}
 function authorize(credentials, callback) {
     const { client_secret, client_id, redirect_uris } = credentials.installed;
     const oAuth2Client = new google.auth.OAuth2(
@@ -54,6 +58,22 @@ function getAccessToken(oAuth2Client, callback) {
             });
             callback(oAuth2Client);
         });
+    });
+}
+
+function makeFolder(auth) {
+
+    const drive =  google.drive({ version: 'v3', auth });
+    let fileMetaData = {
+        'name': 'figa',
+        'mimeType': 'application/vnd.google-apps.folder'
+    }
+    drive.files.create({
+        resource: fileMetaData,
+        fields: 'id'
+    }, function (error, file) {
+        if (error) return console.error(error);
+        console.log(file.data.id);
     });
 }
 
@@ -148,5 +168,6 @@ function test(request, response, html) {
     }); 
     request.pipe(busboy);
 }
+// console.log('test');
 
 module.exports = test;

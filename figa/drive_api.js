@@ -3,6 +3,7 @@ const Busboy = require('busboy');
 const readline = require('readline');
 const { google } = require('googleapis');
 const db = require('./db');
+const pool = db.getPool();
 
 const SCOPES = [
     'https://www.googleapis.com/auth/drive',
@@ -22,7 +23,7 @@ function initiateAuthorization(callback) {
         if (error) return callback(error);
         authorize(credentials, callback);
     }
-    db.getDriveCredentials(initAuth);
+    db.getDriveCredentials(pool, initAuth);
 }
 
 function authorize(credentials, callback) {
@@ -39,10 +40,10 @@ function authorize(credentials, callback) {
         }
         else {
             oAuth2Client.setCredentials(token);
-            callback(null,oAuth2Client);
+            callback(null, oAuth2Client);
         }
     }
-    db.getAuthToken(cb);
+    db.getAuthToken(pool, cb);
 }
 
 function getAccessToken(oAuth2Client, callback) {
@@ -66,7 +67,7 @@ function getAccessToken(oAuth2Client, callback) {
                 if (error) return callback(error);
                 callback(null, oAuth2Client);
             }
-            db.setAuthToken(token, cb);
+            db.setAuthToken(pool, token, cb);
 
             // fs.writeFile(TOKEN_PATH, JSON.stringify(token), (error) => {
             //     if (error) return console.error(error);
@@ -76,6 +77,8 @@ function getAccessToken(oAuth2Client, callback) {
         });
     });
 }
+
+
 
 function searchFiles(auth) {
     // code to be
@@ -105,11 +108,12 @@ function downloadFiles(auth) {
     );
 }
 
-function uploadFiles(auth, file, callback) {
+function uploadFiles(auth, parent, file, callback) {
     console.log('uploading files');
     const drive = google.drive({version: 'v3', auth});
     let fileMetaData = {
-        'name': file.name
+        'name': file.name,
+        parents: [parent]
     };
     let media = {
         mimetype: file.type,
@@ -123,7 +127,7 @@ function uploadFiles(auth, file, callback) {
         if (error) return callback('Could not upload file, ' + error);
         console.log('File uploaded with id: ', file.data);
         callback(null, file.data);
-    });
+    });        
 }
 
 function listFiles(auth) {
@@ -145,29 +149,80 @@ function listFiles(auth) {
     });
 }
 
-function redirect(response, html) {
-    response.writeHead(200, {'Content-Type': 'text/html'});
-    fs.createReadStream(html).pipe(response);
+function getFolder(auth, foldername, callback) {
+    console.log('Getting folder');
+    db.getFolderId(pool, function (error, folder_id) {
+        if (error) return callback(error);
+        console.log('Folder found in database');
+        const drive = google.drive({ version: 'v3', auth });
+        drive.files.list({
+            q: `mimeType = 'application/vnd.google-apps.folder' and name='${foldername}' and trashed=false`,
+            fields: 'files(id)',
+            spaces: 'drive'
+        }, function (error, response) {
+            if (error) {
+                console.log(error);
+                callback(error);
+            } else {
+                let folder = response.data.files;
+                if (folder.length > 0) {
+                    drive_folder_id = folder[folder.length - 1].id
+                    console.log('Folder found on drive');
+                    if (drive_folder_id === folder_id) {
+                        console.log('Folders match, uploading in same folder');
+                        callback(null, folder_id);
+                    }
+                    else {
+                        console.log('Folders dont match');
+                        db.emptyTagsFiles(null, function (error) {
+                            makeFolder(auth, foldername, callback, drive);
+                        });
+                    }
+                }
+                else {
+                    console.log('No folder found in db');
+                    makeFolder(auth, foldername, callback, drive);
+                }
+            }
+        }); 
+    });
 }
 
-function test(request, response, html) {
-    console.log(request.url);
-    const busboy = new Busboy({headers: request.headers});
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        try {
-            console.log(encoding);
-            console.log(mimetype);
-            console.log(file);
-            file.pipe(fs.createWriteStream('./uploads/' + filename));
-        }
-        catch (e) {
-            console.log(e);
-        }
-        finally {
-            redirect(response, html);
-        }
-    }); 
-    request.pipe(busboy);
+function makeFolder(auth, foldername, callback, drv) {
+    console.log('Making folder');
+    const drive = drv || google.drive({ version: 'v3', auth });
+    let fileMetaData = {
+        'name': foldername,
+        'mimeType': 'application/vnd.google-apps.folder'
+    }
+    drive.files.create({
+        resource: fileMetaData,
+        fields: 'id'
+    }, function (error, file) {
+        if (error) return callback(error);
+        console.log('Folder made');
+        db.setFolderId(pool, file.data.id, function (error) {
+            if (error) return callback(error);
+            callback(null, file.data.id);   
+        })
+    });
 }
 
-module.exports = { initiateAuthorization, uploadFiles };
+// initiateAuthorization(function (error, auth) {
+//     if (error) return console.log(error);
+//     makeFolder(auth, 'figa', function (error, data) {
+//         if (error) return console.log(error);
+//         console.log(data);
+//     });
+// })
+
+
+// initiateAuthorization(function (error, auth) {
+//     if (error) return console.log(error);
+//     getFolder(auth, 'figa', function (error, data) {
+//         if (error) return console.log(error);
+//         console.log(data);
+//     });
+// })
+
+module.exports = { initiateAuthorization, uploadFiles, getFolder };

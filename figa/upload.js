@@ -1,7 +1,7 @@
 // globals
 const async = require('async');
 // const Busboy = require('busboy');
-// const DB = require('./db');
+const db = require('./db');
 const drive = require('./drive_api');
 const formidable = require('formidable');
 const fs = require('fs');
@@ -129,36 +129,54 @@ function uploadProcessor(tags, files, response) {
             },
             function uploadToDrive(files, callback) {
                 let uploaded_files = [];
+    
                 drive.initiateAuthorization(function (error, oAuthClient) {
                     if (error) return callback(error);
                     console.log('access token acquired');
-                    async.each(files, function (file, callback) {
-                        console.log('Pushing file to drive with name ', file.name);
-                        file['stream'] = bufferToStream(file.buffer);
-                        drive.uploadFiles(oAuthClient, file, function (error, record) {
-                            if (error) {
-                                callback(error);
-                            }
+                    drive.getFolder(oAuthClient, 'figa', function (error, folder_id) {
+                        if (error) return callback(error);
+                        async.each(files, function (file, callback) {
+                            console.log('Pushing file to drive with name ', file.name);
+                            file['stream'] = bufferToStream(file.buffer);
+                            drive.uploadFiles(oAuthClient, folder_id, file, function (error, record) {
+                                if (error) {
+                                    callback(error);
+                                }
+                                else {
+                                    file['id'] = record.id;
+                                    uploaded_files.push(file);
+                                    console.log('pushed');
+                                    callback();
+    
+                                }
+                            });
+                        }, function (error) {
+                            // create records of each uploaded file
+                            if (error) return callback(error + ' an error occured');
                             else {
-                                console.log(record);
-                                file['id'] = record.id;
-                                uploaded_files.push(file);
-                                callback();
+                                console.log('All files uploaded to drive.')
+                                console.log('Initiating storing files to db...')
+                                callback(null, uploaded_files);
                             }
                         });
-                    }, function (error) {
-                        // create records of each uploaded file
-                        if (error) return callback(error + ' an error occured');
-                        else {
-                            console.log(uploaded_files);
-                            callback(null, uploaded_files);
-                        }
                     });
                 });
             },
-            // function addFileRecord(files, callback) {
-
-            // },
+            function addFileRecord(files, callback) {
+                tags = tags.split(',');
+                db.getPool(function (pool) {
+                    async.each(files, function(file, callback){
+                        db.addFileRecord(pool, tags, file, function (error) {
+                            if (error) return callback(error);
+                            console.log('File record inserted into db ', file.name);
+                            callback();
+                        })
+                    }, function (error) {
+                        if (error) return callback(error);
+                        callback(null, 'done');
+                    })
+                })
+            },
             // function cleanUp(callback) {
             //     // cleanup code
             //     callback();
@@ -176,6 +194,7 @@ function uploadProcessor(tags, files, response) {
                 response.writeHead(200, {'Content-Type': 'text/plain'});
                 response.end('Uploaded.');
             }
+            console.log('Done form parsing.');
         });
     }
 }
