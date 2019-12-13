@@ -158,16 +158,23 @@ $('#uploadForm').on('click', '#upload-do', function (e) {
 });
 
 function postUpload(data) {
-    if (data !== 'Uploaded.') {
-        let response = JSON.parse(data);
-        if (response['duplicates'].length > 0) {
-            let message = response['duplicates'].join(', ');
-            let reupload = confirm(`Duplicates found.\nCannot upload: ${message}\nRetry with different files or file names.`);
-            // if (reupload) {
+    let response = JSON.parse(data);
+    if (response.success === false) {
+        alert(response.error);
+    }
+    else if (response.success === 'partial') {
+        let message = '';
+        let count = 1;
+        response.error.forEach(error => {
+            message += `${count}. File: ${error.file}\nError: ${error.message}\n`;
+            count++;
+        });
+        // let reupload = confirm(`Duplicates found.\nCannot upload: ${message}\nRetry with different files or file names.`);
+        // if (reupload) {
 
-            // }
-            showOnlyDuplicates(response['duplicates']);
-        }
+        // }
+        alert(message);
+        showOnlyDuplicates(response.error);
     }
     else {
         alert('Upload successfully.')
@@ -189,7 +196,7 @@ function showOnlyDuplicates(dup_list) {
     // deletes images that were uploaded and keep the ones that weren't.
     for (let file = 0; file < uploaded_files.length; file ++) {
         for (let dup = 0; dup < dup_list.length; dup++) {
-            if (dup_list[dup] === uploaded_files[file].name) {
+            if (dup_list[dup].name === uploaded_files[file].name) {
                 flag = true;    
                 break;
             }

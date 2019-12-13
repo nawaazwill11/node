@@ -129,7 +129,7 @@ function uploadProcessor(tags, files, response) {
                     else {
                         files_with_error.push({
                             file: file.name,
-                            on: 'validation'
+                            message: 'Invalid file'
                         });
                     }
                 }
@@ -154,20 +154,20 @@ function uploadProcessor(tags, files, response) {
                                 if (error) {
                                     files_with_error.push({
                                         file: file.name,
-                                        on: 'upload'
+                                        message: 'Drive upload failed'
                                     });
-                                    return callback(`Failed to upload ${file.name} to drive\n${error}`);
+                                    return callback(`Failed to upload ${file.name} to drive\n${error}`); //each
                                 }
                                 console.log('File ' + file.name + ' successfully uploaded')
                                 file['id'] = record.id; // file id stored in file object 
                                 uploaded_files.push(file); // pushed upload files to a list for storing them in database
-                                callback();
+                                callback(); // each
                             });
                         }, function (error) {
                             if (error) return callback(error);
                             console.log('All files uploaded to drive.');
                             console.log('Inserting file records in db...');
-                            callback(null, uploaded_files);
+                            callback(null, uploaded_files); //waterfall
                         });
                     });
                 });
@@ -185,9 +185,9 @@ function uploadProcessor(tags, files, response) {
                             if (error) {
                                 files_with_error.push({
                                     file: file.name,
-                                    on: 'thumbnail'
+                                    message: 'Cannot create thumbnail'
                                 });
-                                return callback(error);
+                                return callback(error); // each
                             }
                             console.log('Thumbnail fetched');
                             file['thumbnail'] = thumbnail;
@@ -196,20 +196,20 @@ function uploadProcessor(tags, files, response) {
                                 if (error) {
                                     files_with_error.push({
                                         file: file.name,
-                                        on: 'record insertion'
+                                        message: 'Database insertion failed'
                                     });
                                     console.log(error);
-                                    return callback(error);
+                                    return callback(error); // each
                                 }
                                 console.log('File ' + file.name + ' record inserted into db ');
-                                callback();
+                                callback(); // each
                             });
                         });
                     }, function (error) {
-                        if (error) return callback(error);
+                        if (error) return callback(error); // waterfall
                         console.log('All files record successfully inserted in db.');
                         console.log('Files that failed to upload due to error\n', files_with_error);
-                        callback();
+                        callback(); // waterfall
 
                     });
                 });
@@ -218,17 +218,28 @@ function uploadProcessor(tags, files, response) {
             // unsolvable error return server error
             if (error) {
                 response.writeHead(500, {'Content-Type': 'text/plain'});
-                response.end(error.toString());
+                let data = {
+                    success: false,
+                    error: error
+                }
+                response.end(JSON.stringify(data));
             }
             // partial success error
             else if (files_with_error.length > 0) {
                 response.writeHead(207, {'Content-Type': 'text/plain'});
-                response.end(JSON.stringify(files_with_error));
+                let data = {
+                    success: 'partial',
+                    error: files_with_error
+                }
+                response.end(JSON.stringify(data));
             }
             // all process successfully executed
             else {
                 response.writeHead(200, {'Content-Type': 'text/plain'});
-                response.end('Uploaded.');
+                let data = {
+                    success: true
+                }
+                response.end(JSON.stringify(data));
             }
             console.log('Done processing.');
         });
