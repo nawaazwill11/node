@@ -1,0 +1,19 @@
+{
+  "name": "firstpwa",
+  "version": "1.0.0",
+  "description": "My first PWA",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "pwa"
+  ],
+  "author": "Nawaaz K",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "finalhandler": "^1.1.2",
+    "router": "^1.3.3"
+  }
+}

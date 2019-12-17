@@ -6,57 +6,25 @@ body {
     background-color: lightblue;
     margin: 0;
     padding: 0;
-    font-size: 16px;
+    font-size: 14px;
 }
 .container {
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
     padding: 0;
     margin: 0;
-
 }
-#navbar {
+#root {
     display: flex;
-    background-color: black;
+    justify-content: center;
+    width: 100%;
 }
-#navbar * {
-    color: white;
-}
-#site {
-    flex: 10;
-    height: auto;
-    padding: 30px;
-}
-#site-name {
-    font-size: 3em;
-    margin: 0 !important;
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    position: relative;
-}
-#nav-right {
-    flex: 5;
-}
-#nav-list {
-    display: flex;
-    margin-right: 60px;
-    height: 100%;
-    margin-top: 0;
-    margin-bottom: 0;
-    align-items: center;
-}
-#nav-list li {
-    list-style: none;
-    flex: 1;
-    font-size: 2em;  
+#upload {
+    width: 150px;
 }
 #upload-root {
     position: relative;
-    width: 800px;
     background-color: var(--upload-bg);
-    
-    /* justify-content: center; */
     margin: 50px auto;
     padding: 10px 30px;
     border-radius: 5px;
@@ -74,7 +42,7 @@ body {
 #tags {
     border: none;
     border-bottom: 1px solid lightgray;
-    width: 75%;
+    width: 90%;
     background-color: var(--upload-bg);
     margin-bottom: 20px;
     height: 30px;
@@ -90,14 +58,15 @@ body {
     padding: 10px 0;
     max-height: 300px;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 .image-box {
     position: relative;
     display: flex;
     justify-content: center;
-    margin: 10px;
-    width: 100px;
-    height: 100px;
+    margin: 8px;
+    width: 70px;
+    height: 70px;
     background-color: ghostwhite;
 }
 .image-box img {
@@ -140,6 +109,8 @@ body {
     flex-direction: column; */
 }
 #upload-controls-container {
+    display: flex;
+    flex-direction: column-reverse;
     border-top: 1px solid lightgray;
     text-align: right;
     padding-top: 20px;
@@ -150,6 +121,7 @@ body {
     border: 1px solid lightgray;
     padding: 10px;
     border-radius: 5px;
+    margin-bottom: 15px;
 }
 #upload-do {
     background-color: lightskyblue;
@@ -175,4 +147,76 @@ body {
 }
 .show {
     display: flex !important;
+}
+
+
+/*
+*
+* Responsive media queries *
+*
+*/
+
+@media screen and (min-width: 258px) {
+    #upload {
+        width: 250px;
+    }
+}
+
+@media screen and (min-width: 354px) {
+    #upload {
+        width: 318px;
+    }
+}
+
+@media screen and (min-width: 449px) {
+    #upload {
+        width: 404px;
+    }
+}
+
+@media screen and (min-width: 576px) {
+    #upload {
+        width: 493px;
+    }
+    
+}
+
+@media screen and (min-width: 768px) {
+    body {
+        font-size: 20px;
+    }
+    #upload {
+        width: 560px;
+    }
+    .image-box {
+        width: 100px;
+        height: 100px;
+    }
+    #upload-controls-container {
+        display: block;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    :root {
+        --nav-division: 1fr 600px;
+    }
+    body {
+        font-size: 22px;
+    }
+    #upload {
+        width: 768px;
+    }
+    .image-box {
+        width: 120px;
+        height: 120px;
+    }
+   
+
+@media screen and (min-width: 1130px) {
+    
+}
+
+@media screen and (min-width: 1300px) {
+   
 }

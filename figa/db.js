@@ -34,7 +34,7 @@ function getAuthToken(pool, callback) {
     pool
     .query("SELECT credentials->'token' as token FROM drive_credentials;")
     .then(result => {
-        if (result.rows.length > 0){
+        if (result.rows[0].token !== null){
             console.log('found access token');
             callback(null, result.rows[0].token);
         }
@@ -156,10 +156,10 @@ function emptyTagsFiles(pl, callback) {
     });
 }
 
-getPool()
-.query('SELECT thumbnail from files where id=30')
-.then(result => {
-    console.log(result.rows);
-})
+// getPool()
+// .query("SELECT credentials->'token' as token from drive_credentials")
+// .then(result => {
+//     console.log(result.rows[0]);
+// })
 
 module.exports = { getPool, getDriveCredentials, getAuthToken, setAuthToken, getFolderId, setFolderId, addFileRecord, emptyTagsFiles }; 

@@ -20,6 +20,10 @@ function initiateAuthorization(callback) {
     db.getDriveCredentials(pool, initAuth);
 }
 
+// initiateAuthorization(function (oAuth) {
+//     console.log('oAuthClient object: ', oAuth);
+// });
+
 // creates an authentication object using authentication token
 function authorize(credentials, callback) {
     console.log('authorizing');
@@ -215,7 +219,6 @@ function makeFolder(auth, foldername, callback, drv) {
 //         console.log(data);
 //     });
 // })
-
 
 // initiateAuthorization(function (error, auth) {
 //     if (error) return console.log(error);

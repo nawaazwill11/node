@@ -10,6 +10,7 @@
         <meta name="description" content="File Gallant">
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./css/nav.css">
         <link rel="stylesheet" href="./css/upload.css">
     </head>
     <body>
@@ -20,12 +21,15 @@
             <div id="site">
                 <a id="site-name" href="/">Figa</a>
             </div>
-            <div id="nav-right">
-                <ul id="nav-list">
-                    <li><a href="/">/home</a></li>
-                    <li><a href="/upload">/upload</a></li>
-                    <li><a href="/view">/view</a></li>
+            <div id="nav-menu">
+                <ul id="nav-menu-list">
+                    <li class="nav-item"><a href="/">/home</a></li>
+                    <li class="nav-item"><a href="/store">/store</a></li>
+                    <li class="nav-item"><a href="/upload">/upload</a></li>
                 </ul>
+            </div>
+            <div id="ham">
+                <img class="ham-img" src="./img/ham-white.svg" alt="x">
             </div>
         </nav>
         <div class="container">
@@ -61,6 +65,7 @@
             <h1>Uploading...</h1>
         </div>
         <script src="./js/jquery-3.4.1.min.js"></script>
+        <script src="./js/nav.js"></script>
         <script src="./js/upload.js"></script>
     </body>
 </html>

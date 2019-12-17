@@ -112,7 +112,7 @@ function uploadProcessor(tags, files, response) {
     let tag_error = validateTags(tags);
     if (tag_error) {
         response.writeHead(500, {'Content-Type': 'text/plain'});
-        response.end(JSON.stringify({ error: error }));
+        response.end(JSON.stringify({ error: tag_error }));
     }
     // only proceed if tags are valid. else respond with error
     else {

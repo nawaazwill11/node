@@ -3,12 +3,12 @@ const Router = require('router');
 const router = Router();
 const fh = require('finalhandler');
 const upload = require('./upload');
-const view = require('./view');
+const store = require('./store');
 const fetch = require('./fetch');
 const test = require('./test');
 const template = {
     '/': 'index.html',
-    'view': 'view_files.html',
+    'store': 'store.html',
     'upload': 'upload.html',
     'test': 'test.html'
 }
@@ -112,13 +112,13 @@ router.get(/\/data\/([a-z\.\-\_0-9]+\.[a-z0-9]+)/i, (request, response) => {
         response.end();
     });
 });
-// view uploaded files
-router.get('/view',  (request, response) => {
+// edit and view files
+router.get('/store',  (request, response) => {
     response.writeHead(200, {'Content-Type': 'text/html'});
-    fs.createReadStream(template['view']).pipe(response);
+    fs.createReadStream(template['store']).pipe(response);
 });
-router.post('/view', function (request, response) {
-    view(response);
+router.post('/store', function (request, response) {
+    store(response);
 });
 router.post('/suggestion', function (request, response) {
     fetch.suggestions(response);

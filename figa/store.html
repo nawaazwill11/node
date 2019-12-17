@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>File Store</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./css/nav.css">
+        <link rel="stylesheet" href="./css/store.css">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <nav id="navbar">
+            <div id="site">
+                <a id="site-name" href="/">Figa</a>
+            </div>
+            <div id="nav-menu">
+                <ul id="nav-menu-list">
+                    <li class="nav-item"><a href="/">/home</a></li>
+                    <li class="nav-item"><a href="/store">/store</a></li>
+                    <li class="nav-item"><a href="/upload">/upload</a></li>
+                </ul>
+            </div>
+            <div id="ham">
+                <img class="ham-img" src="./img/ham-white.svg" alt="x">
+            </div>
+        </nav>
+        <div id="container" class="container">
+            <div id="store-main">
+                <div id="content-header">
+                    <div id="header-name">
+                        <h1>Tag Collections</h1>
+                    </div>
+                    <div id="header-options">
+                        <div id="collection-sort" class="dropdown-options">
+                            <label for="collection-sort">Sort: </label>
+                            <select name="collection-sort" class="dropdown" title="Sort">
+                                <option value="Latest" class="dropdown-item">Latest</option>
+                                <option value="Oldest" class="dropdown-item">Oldest</option>
+                                <option value="Alphabetic" class="dropdown-item">Alphabetic</option>
+                                <option value="Favorites" class="dropdown-item">Favorites</option>
+                            </select>
+                        </div>
+                        <div id="collection-view" class="dropdown-options">
+                            <label for="collection-view">View: </label>
+                            <select name="collection-view" class="dropdown" title="Arrange">
+                                <option value="List" class="dropdown-item">List</option>
+                                <option value="Grid" class="dropdown-item">Grid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="content-body">
+                    <div class="row">
+                        <div class="row-box bdark">
+                            <div class="box-main">
+                                <div class="box-menu">
+                                    <img src="./img/more.svg" alt="menu" class="img20">
+                                </div>
+                                <div class="box-content-name">
+                                    <p>Tag Name</p>
+                                </div>
+                                <div class="box-content-small">
+                                    <span>Total files: <span class="nof">50</span></span>
+                                </div>
+                            </div>
+                            <div class="box-overlay l1">
+                                <div class="box-overlay-title">
+                                    <img src="./img/back.svg" alt="back" class="box-back img20">
+                                    <span>Options</span>
+                                </div>
+                                <div class="box-options">
+                                    <ul class="styleless padl20 padb5">
+                                        <li>Favorite</li>
+                                        <li>Download</li>
+                                        <li class="li-disabled">[Share]</li>
+                                        <li>Delete</li>
+                                        <li class="li-linked box-next">
+                                            More info 
+                                            <img src="./img/next.svg" alt="next" class="img20">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="box-overlay l2">
+                                <div class="box-overlay-title">
+                                    <img src="./img/back.svg" alt="back" class="box-back img20">
+                                    <span>More Info</span>
+                                </div>
+                                <div class="box-options">
+                                    <ul class="styleless padl20 padb5">
+                                        <li>No. of files: <span class="nof">50</span></li>
+                                        <li>Date Created: <span class="doc">10/10/19</span></li>
+                                        <li>Access times: <span class="nof">12</span></li>
+                                        <li>Last accessed: <span class="nof">01/12/19</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <script src="./js/jquery-3.4.1.min.js"></script>
+        <script src="./js/nav.js"></script>
+        <script src="./js/store.js">
+        </script>
+    </body>
+</html>
