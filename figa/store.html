@@ -49,9 +49,9 @@
                         </div>
                         <div id="collection-view" class="dropdown-options">
                             <label for="collection-view">View: </label>
-                            <select name="collection-view" class="dropdown" title="Arrange">
-                                <option value="List" class="dropdown-item">List</option>
+                            <select name="collection-view" id="view-dropdown"   class="dropdown" title="Arrange">
                                 <option value="Grid" class="dropdown-item">Grid</option>
+                                <option value="List" class="dropdown-item">List</option>
                             </select>
                         </div>
                     </div>
@@ -60,14 +60,14 @@
                     <div class="row">
                         <div class="row-box bdark">
                             <div class="box-main">
-                                <div class="box-menu">
-                                    <img src="./img/more.svg" alt="menu" class="img20">
-                                </div>
                                 <div class="box-content-name">
                                     <p>Tag Name</p>
                                 </div>
                                 <div class="box-content-small">
                                     <span>Total files: <span class="nof">50</span></span>
+                                </div>
+                                <div class="box-menu">
+                                    <img src="./img/more.svg" alt="menu" class="img20">
                                 </div>
                             </div>
                             <div class="box-overlay l1">
@@ -99,13 +99,16 @@
                                         <li>Date Created: <span class="doc">10/10/19</span></li>
                                         <li>Access times: <span class="nof">12</span></li>
                                         <li>Last accessed: <span class="nof">01/12/19</span></li>
+
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div id="file-adder" class="floating-ball">
+                    <span>+</span>
+                </div>
             </div>
         </div>
         <script src="./js/jquery-3.4.1.min.js"></script>
