@@ -52,14 +52,22 @@ body {
     display: flex;
     justify-content: space-between;
 }
+.row-list {
+    flex-direction: column;
+}
 .box-content-name {
     margin-bottom: 5px;
 }
 .box-content-name > p {
     font-size: large;
     font-style: italic;
-    margin: unset !important;
+    line-height: 1em;
+    max-height: 3em;
+    text-align: justify;
+    overflow: hidden;
+    margin-right: -1em;
 }
+
 .row-box {
     display: flex;
     flex: 1;
@@ -96,14 +104,27 @@ body {
 }
 .box-menu-list {
     position: relative;
+    margin: 0;
     top: 0px;
+    padding: 0;
+    padding-inline-start: 0px;
+}
+.box-menu-list li {
+    padding: 10px 20px;
+    padding-right: 20px;
+    margin-top: 0;
+    cursor: pointer;
+}
+.box-menu-list li:hover {
+    background-color: lightgray;
 }
 .box-overlay {
     position: absolute;
     background-color: whitesmoke;
     color: black;
-    height: 150px;
-    width: 100%;
+    top: 0px;
+    right: 0px;
+    width: fit-content;
 }
 .l1, .l2{
     display: none;
@@ -114,8 +135,15 @@ body {
 .l2 {
     z-index: 3;
 }
+.l2 li {
+    display: flex;
+    flex-direction: column;
+}
 .box-overlay div {
     position: relative;
+}
+.li-linked {
+    display: flex;
 }
 .img20 {
     width: 20px;
@@ -142,6 +170,7 @@ body {
     box-shadow: 0 0 5px 2px lightgrey, 0 0 1px 1px lightgrey;
     bottom: 20px;
     right: 20px;
+    cursor: pointer;
 }
 .floating-ball > span {
     font-size: 50px;
