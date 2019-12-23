@@ -14,8 +14,8 @@ body {
 #store-main {
     position: relative;
     background-color: white;
-    width: 90%;
-    height: 100%;
+    width: 85%;
+    height: fit-content;
     padding: 10px;
     margin-top: 20px;
     margin-left: auto;
@@ -50,53 +50,72 @@ body {
 } */
 .row {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
 }
 .row-list {
-    flex-direction: column;
+    flex-direction: row;
+    
 }
-.box-content-name {
-    margin-bottom: 5px;
-}
-.box-content-name > p {
-    font-size: large;
-    font-style: italic;
-    line-height: 1em;
-    max-height: 3em;
-    text-align: justify;
-    overflow: hidden;
-    margin-right: -1em;
-}
-
 .row-box {
     display: flex;
-    flex: 1;
     position: relative;
+    flex: 1;
     flex-direction: column;
     padding: 15px;
     height: 120px;
     justify-content: center;
     align-items: center;
     border: 1px solid;
+    min-width: -webkit-fill-available;
+    max-width: 120px;
+    margin: 3px
 }
 .row-box-list {
     flex-direction: row;
     justify-content: space-between;
-    height: fit-content;
+    padding: 15px 0;
+    min-width: 100%;
+    min-width: -webkit-fill-available !important;
+    height: fit-content !important;
 }
 .bdark {
     color: white;
     background-color: #000000ad;
 }
 .box-main {
- z-index: 1;   
+    z-index: 1;
+    height: 100%;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .box-main-list {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     width: 100%;
     align-items: center;
 }
+.box-content-name {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    word-break: break-all;
+    width: 100%;
+    font-size: 1.3em;
+    justify-content: center;
+    text-align: center;
+    padding: 0px 20px;
+}
+.box-content-small {
+    display: flex;
+    align-items: flex-end;
+    flex: 1;
+}
+
 .box-menu {
     position: absolute;
     top: 10px;
@@ -175,4 +194,66 @@ body {
 .floating-ball > span {
     font-size: 50px;
     color: gray;
+}
+
+/*
+*
+* Media-queries for responsiveness
+*
+*/
+@media screen and (min-width: 372px) {
+    #store-main {
+        width: 317px;
+    }
+    .row {
+        justify-content: unset;
+    }
+    .row-box {
+        min-width: 120px;
+    }
+}
+
+@media screen and (min-width: 560px) {
+    #store-main {
+        min-width: 475px;
+    }
+}
+@media screen and (min-width: 745px) {
+    #store-main {
+        width: 633px;
+    }
+}
+@media screen and (min-width: 930px) {
+    #store-main {
+        width: 790px;
+    }
+}
+@media screen and (min-width: 1117px) {
+    #store-main {
+        width: 949px;
+    }
+    .row-box {
+        min-width: 150px;
+        height: 150px;
+    }
+}
+@media screen and (min-width: 1303px) {
+    #store-main {
+        width: 1128px;
+    }
+}
+@media screen and (min-width: 1550px) {
+    #store-main {
+        width: 1318px;
+    }
+}
+@media screen and (min-width: 1770px) {
+    #store-main {
+        width: 1505px;
+    }
+}
+@media screen and (min-width: 1920px) {
+    #store-main {
+        width: 1692px;
+    }
 }
