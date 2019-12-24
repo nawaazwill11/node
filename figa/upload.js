@@ -12,11 +12,13 @@ const thumbnail = require('./thumbnail');
 // empties the upload folder on every load.
 function emptyUploads() {
     let upload_dir = './uploads';
-    for (file of fs.readdirSync('./uploads')) {
-        fs.unlink(path.join(upload_dir, file), (error) => {
-            if (error) throw error;
-        });
-        console.log('uploads empty');
+    for (file of fs.readdirSync('.')) {
+        if (file === 'uploads') {
+            fs.unlink(path.join(upload_dir, file), (error) => {
+                if (error) throw error;
+            });
+            console.log('uploads empty');
+        }
     }
 }
 emptyUploads();
