@@ -70,7 +70,8 @@ body {
     border: 1px solid;
     min-width: -webkit-fill-available;
     max-width: 120px;
-    margin: 3px
+    margin: 3px;
+    cursor: pointer;
 }
 .row-box-list {
     flex-direction: row;
@@ -79,6 +80,9 @@ body {
     min-width: 100%;
     min-width: -webkit-fill-available !important;
     height: fit-content !important;
+}
+.row-box:hover {
+    box-shadow: 0px 0px 10px 2px grey;
 }
 .bdark {
     color: white;
