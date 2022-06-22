@@ -8,7 +8,7 @@
     "start": "node busboy.js"
   },
   "dependencies": {
-    "async": "^3.1.0",
+    "async": "^3.2.2",
     "busboy": "^0.3.1",
     "finalhandler": "^1.1.2",
     "jimp": "^0.9.3",
